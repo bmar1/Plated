@@ -65,9 +65,15 @@ export default function Landing() {
         <div className="flex items-center">
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-white hover:text-gray-200 transition-colors">Features</a>
-            <a href="#process" className="text-white hover:text-gray-200 transition-colors">Process</a>
-            <a href="#pricing" className="text-white hover:text-gray-200 transition-colors">Pricing</a>
+            <a href="#features" className="text-white hover:text-gray-200 transition-colors">
+              Features
+            </a>
+            <a href="#process" className="text-white hover:text-gray-200 transition-colors">
+              Process
+            </a>
+            <a href="#pricing" className="text-white hover:text-gray-200 transition-colors">
+              Pricing
+            </a>
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -120,9 +126,15 @@ export default function Landing() {
           >
             About Us
           </button>
-          <a href="#features" className="block w-full py-2 text-white hover:bg-[#446437]">Features</a>
-          <a href="#process" className="block w-full py-2 text-white hover:bg-[#446437]">Process</a>
-          <a href="#pricing" className="block w-full py-2 text-white hover:bg-[#446437]">Pricing</a>
+          <a href="#features" className="block w-full py-2 text-white hover:bg-[#446437]">
+            Features
+          </a>
+          <a href="#process" className="block w-full py-2 text-white hover:bg-[#446437]">
+            Process
+          </a>
+          <a href="#pricing" className="block w-full py-2 text-white hover:bg-[#446437]">
+            Pricing
+          </a>
           <button
             onClick={() => {
               handleNavigation();
@@ -523,8 +535,8 @@ export default function Landing() {
             >
               <img src={meal.img} className="w-full h-64 object-cover" />
               <div className="p-6">
-                <h3 className="text-2xl font-semibold mb-2 text-green-800">{meal.title}</h3>
-                <p className="text-base font-medium text-green-700">{meal.info}</p>
+                <h3 className="text-2xl font-semibold mb-2 text-black">{meal.title}</h3>
+                <p className="text-base font-medium text-black">{meal.info}</p>
                 <p className="text-sm text-gray-500 mb-4">{meal.desc}</p>
               </div>
 
