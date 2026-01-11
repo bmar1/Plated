@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import useSmoothScroll from './hooks/useSmoothScroll';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import LoadingScreen from './pages/LoadingScreen';
@@ -11,56 +13,61 @@ import { DarkModeProvider } from './contexts/DarkModeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  const scrollableRef = useRef(null);
+  useSmoothScroll(scrollableRef);
+
   return (
-    // define routes under router, wrapping with protected routes which fall-back if invalid token/status
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/landing" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/landing" element={<LandingPage />} />
-        <Route path="/about" element={<About />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/LoadingScreen"
-          element={
-            <ProtectedRoute>
-              <LoadingScreen />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/recipe"
-          element={
-            <ProtectedRoute>
-              <RecipePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/grocery"
-          element={
-            <ProtectedRoute>
-              <GroceryListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/all-meals"
-          element={
-            <ProtectedRoute>
-              <AllMeals />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+    <div ref={scrollableRef} style={{ height: '100vh', overflowY: 'auto' }}>
+      {/* define routes under router, wrapping with protected routes which fall-back if invalid token/status */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/landing" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/about" element={<About />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/LoadingScreen"
+            element={
+              <ProtectedRoute>
+                <LoadingScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipe"
+            element={
+              <ProtectedRoute>
+                <RecipePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/grocery"
+            element={
+              <ProtectedRoute>
+                <GroceryListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/all-meals"
+            element={
+              <ProtectedRoute>
+                <AllMeals />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </div>
   );
 }
 
