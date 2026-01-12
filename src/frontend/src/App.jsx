@@ -13,6 +13,7 @@ import { DarkModeProvider } from './contexts/DarkModeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  //initialize smooth scrolling on the main scrollable div
   const scrollableRef = useRef(null);
   useSmoothScroll(scrollableRef);
 
