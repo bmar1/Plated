@@ -5,7 +5,6 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 ![Build Status](https://github.com/bmar1/Pantry-Assist/workflows/Deploy%20to%20EC2/badge.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)
 ![React](https://img.shields.io/badge/React-18-blue)
-
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 
