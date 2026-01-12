@@ -1,3 +1,4 @@
+#2 services: Backend relies on itself to run in isolation, while frontend relies on backend, all build in 1 docker-network
 services:
   backend:
     build:
@@ -5,6 +6,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+      #env variables
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -15,7 +17,7 @@ services:
       - WALMART_KEY=${WALMART_KEY}
     networks:
       - app-network
-
+      
   frontend:
     build:
       context: ./src/frontend
@@ -28,11 +30,10 @@ services:
       - backend
     networks:
       - app-network
-
-
+#undefined pg 
 volumes:
   postgres_data:
-
+#new app network for both services
 networks:
   app-network:
     driver: bridge
