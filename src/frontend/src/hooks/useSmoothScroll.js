@@ -1,3 +1,5 @@
+/* This file defines a custom React hook that enables smooth scrolling behavior for a scrollable element.
+*/
 import { useEffect, useRef } from 'react';
 
 const lerp = (a, b, t) => (1 - t) * a + t * b;
@@ -7,6 +9,7 @@ export default function useSmoothScroll(scrollableRef) {
   const currentScroll = useRef(0);
   const animationFrameId = useRef(null);
 
+  //always run a useEffect to set up the smooth scrolling behavior
   useEffect(() => {
     const scrollableElement = scrollableRef.current;
     if (!scrollableElement) return;
@@ -23,6 +26,7 @@ export default function useSmoothScroll(scrollableRef) {
       }
     };
 
+    //on every wheel scroll, calculate the new target scroll positions smoothly
     const onWheel = (e) => {
       e.preventDefault();
       targetScroll.current += e.deltaY;
