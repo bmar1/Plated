@@ -9,9 +9,9 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 
 ## Live Demo
 
-**Try it now:** [plated-app.online](https://plated-app.online/landing)
+**Try it now:** [Full App](https://plated-app.online/landing)
 
-*Frontend preview:* [pantry-assist.vercel.app](https://pantry-assist.vercel.app/landing)
+*Frontend preview:* [Frontend](https://pantry-assist.vercel.app/landing)
 
 ---
 
@@ -142,6 +142,26 @@ Plated/
 ├── .env.example         # Environment template
 └── README.md           # This file
 ```
+
+##  Tech Stack
+
+### Backend
+- **Spring Boot 3.5** - Robust Java framework for RESTful APIs
+- **PostgreSQL** - Reliable relational database
+- **AWS RDS** - Managed database hosting (production)
+- **JWT Authentication** - Secure user sessions
+
+### Frontend
+- **React 18** - Modern UI framework
+- **Responsive Design** - Mobile-first approach
+
+### Infrastructure
+- **Docker & Docker Compose** - Containerized development and deployment
+- **AWS EC2** - Application hosting
+- **GitHub Actions** - Continuous deployment
+- **Vercel** - Frontend preview environment
+
+---
 
 ### Contributing
 
