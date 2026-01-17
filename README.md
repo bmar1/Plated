@@ -7,6 +7,8 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 ![React](https://img.shields.io/badge/React-18-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+---
+
 ## Live Demo
 
 **Try it now:** [Full App](https://plated-app.online/landing)
@@ -31,10 +33,11 @@ A full-stack application aimed to help you save food, tighten your budget, and p
   </tr>
 </table>
 
-
+---
 
 ##  Objective
-This project, 'plated' aims to serve those who are on a budget or want help tracking what they eat — from calories to trying new foods — all in a way that’s easy to manage through the app, so you can spend more time doing what’s important to you!
+
+This project, 'plated' aims to serve those who are on a budget or want help tracking what they eat — from calories to trying new foods — all in a way that's easy to manage through the app, so you can spend more time doing what's important to you!
 
 ---
 
@@ -44,14 +47,37 @@ Plated offers a simple solution to everyday issues, meal planning and buying gro
 
 ---
 
-## Getting started
+## ⚙️ Features
 
-Currently, plated is only hosted with EC2, full stack, however if you'd run it yourself you need:
+###  Grocery Tracking / Planning
+This application, based on your requirements and use cases, adapts to help you find interesting meals while providing grocery prices in your local area via Walmart's data.
+
+###  Meal Planning
+Need help tracking how many calories you eat or what exactly you're eating? Say no more! Plated easily tracks your weekly meals in a clean, organized format, to make sure you never overeat.
+
+###  Security
+Plated boasts secure, role-based access control throughout the app, enforcing security through JWT tokens.
+
+### Analytics
+Know how much you save compared to the average Canadian, at any time
+
+### Ease of use
+We offer an easy UI to navigate through to help you day-by-day to cook, and plan your meals!
+
+![Dashboard](./src/frontend/public/home.png)
+
+---
+
+## Getting Started
+
+Currently, plated is hosted full-stack on EC2. If you'd like to run it yourself you'll need:
 - AWS RDS, EC2 instances
 - Pg Admin
-- API keys (Walmart, with public/private keys, MealDB, Nutrionix which is now deprecated)
+- API keys (Walmart with public/private keys, MealDB, Nutritionix which is now deprecated)
 
-### Quick Start with Docker (Recommended)
+---
+
+### 🐳 Quick Start with Docker (Recommended)
 
 The fastest way to get Plated running locally:
 
@@ -95,32 +121,12 @@ docker-compose up --build
 
 ---
 
-  ### 💻 To run it locally (note that this will only run the frontend):
+### 💻 To run it locally (note that this will only run the frontend):
 ```bash
 git clone https://github.com/bmar1/Plated.git
 npm install
 npm start
 ```
----
-
-## ⚙️ Features
-
-###  Grocery Tracking / Planning
-This application, based on your requirements and use cases, adapts to help you find interesting meals while providing grocery prices in your local area via Walmart’s data.
-
-###  Meal Planning
-Need help tracking how many calories you eat or what exactly you’re eating? Say no more! Plated easily tracks your weekly meals in a clean, organized format, to make sure you never overeat.
-
-###  Security
-Plated  boasts secure, role-based access control throughout the app, enforcing security through JWT tokens.
-
-### Analytics
-Know how much you save compared to the average Canadian, at any time
-
-### Ease of use
-We offer an easy UI to navigate through to help you day-by-day to cook, and plan your meals!
-
-![Dashboard](./src/frontend/public/home.png)
 
 ---
 
@@ -143,7 +149,9 @@ Plated/
 └── README.md           # This file
 ```
 
-##  Tech Stack
+---
+
+## 🏗️ Tech Stack
 
 ### Backend
 - **Spring Boot 3.5** - Robust Java framework for RESTful APIs
@@ -163,20 +171,21 @@ Plated/
 
 ---
 
-### Contributing
+## 🤝 Contributing
 
-If you'd like to contribute, reach out to me on any social media and let's talk
+If you'd like to contribute, reach out to me on any social media and let's talk!
 
 Otherwise, feel free to leave some issues or pull requests!
+
+---
 
 ## 🙏 Acknowledgments
 
 - TheMealDB for recipe data
 - Walmart API for grocery pricing
-- Nutrionix API for calories/macros
+- Nutritionix API for calories/macros
 - The open-source community for inspiration and tools
 
-**Built with ❤️ to make meal planning simple and budget-friendly**
 ---
 
-
+**Built with ❤️ to make meal planning simple and budget-friendly**
