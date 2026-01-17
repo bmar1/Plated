@@ -7,6 +7,11 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 ![React](https://img.shields.io/badge/React-18-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+## Live Demo
+
+**Try it now:** [plated-app.online](https://plated-app.online/landing)
+
+*Frontend preview:* [pantry-assist.vercel.app](https://pantry-assist.vercel.app/landing)
 
 ---
 
@@ -44,9 +49,53 @@ Plated offers a simple solution to everyday issues, meal planning and buying gro
 Currently, plated is only hosted with EC2, full stack, however if you'd run it yourself you need:
 - AWS RDS, EC2 instances
 - Pg Admin
-- API keys relevant (Walmart, with public/private keys, MealDB, Nutrionix which is now deprecated)
+- API keys (Walmart, with public/private keys, MealDB, Nutrionix which is now deprecated)
 
-  ### 💻 To run it locally:
+### Quick Start with Docker (Recommended)
+
+The fastest way to get Plated running locally:
+
+```bash
+# Clone the repository
+git clone https://github.com/bmar1/Plated.git
+cd Plated
+
+# Create your environment file
+cp .env.example .env
+# Edit .env with your API keys and configuration
+
+# Build and start all services
+docker-compose up --build
+
+# Access the application
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8080
+```
+
+That's it! Docker will handle setting up the database, backend, and frontend automatically.
+
+#### Docker Commands
+
+```bash
+# Start services in detached mode
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Stop services and remove volumes (fresh start)
+docker-compose down -v
+
+# Rebuild after code changes
+docker-compose up --build
+```
+
+---
+
+  ### 💻 To run it locally (note that this will only run the frontend):
 ```bash
 git clone https://github.com/bmar1/Plated.git
 npm install
@@ -75,22 +124,39 @@ We offer an easy UI to navigate through to help you day-by-day to cook, and plan
 
 ---
 
-## 🚀 Setup / Use
+## 📦 Project Structure
 
-### 🌐 Hosted Live
-Feel free to refer to the website currently, hosted full-stack on AWS EC2!
-
-**[App Link](https://plated-app.online/landing)**
-
-Frontend Only Host:
-https://pantry-assist.vercel.app/landing
-
----
+```
+Plated/
+├── src/
+│   ├── backend/          # Spring Boot application
+│   │   ├── controllers/  # REST API endpoints
+│   │   ├── models/       # Database entities
+│   │   ├── services/     # Business logic
+│   │   └── config/       # Security & app configuration
+│   └── frontend/         # React application
+│       ├── public/       # Static assets
+│       └── src/          # React components
+├── docker-compose.yml    # Docker services configuration
+├── Dockerfile           # Container image definition
+├── .env.example         # Environment template
+└── README.md           # This file
+```
 
 ### Contributing
 
 If you'd like to contribute, reach out to me on any social media and let's talk
 
 Otherwise, feel free to leave some issues or pull requests!
+
+## 🙏 Acknowledgments
+
+- TheMealDB for recipe data
+- Walmart API for grocery pricing
+- Nutrionix API for calories/macros
+- The open-source community for inspiration and tools
+
+**Built with ❤️ to make meal planning simple and budget-friendly**
+---
 
 
