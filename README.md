@@ -70,6 +70,29 @@ We offer an easy UI to navigate through to help you day-by-day to cook, and plan
 
 ---
 
+---
+
+## 🏛️ Architecture
+
+Plated uses a containerized microservices architecture deployed on AWS, ensuring scalability and reliability.
+
+<p align="center">
+  <img src="./src/frontend/public/diagram.jpg" alt="Architecture Diagram" width="700">
+</p>
+
+### How it works
+
+- **NGINX** acts as a reverse proxy, routing incoming HTTPS requests from `plated-app.online` to the appropriate containers
+- **Frontend Container (React)** serves the user interface on port 80
+- **Backend Container (Spring Boot)** handles API requests on port 8080, processing business logic and authentication
+- **PostgreSQL Database** runs on AWS RDS, providing reliable data persistence separate from the application containers
+- **Docker** containerizes both frontend and backend, making deployment consistent across environments
+- **EC2** hosts the entire application stack, with all containers running within a single instance for cost-effective production deployment
+
+This architecture allows for easy local development with Docker Compose while maintaining production-grade deployment on AWS infrastructure.
+
+---
+
 ## Getting Started
 
 Currently, plated is hosted full-stack on EC2. If you'd like to run it yourself you'll need:
