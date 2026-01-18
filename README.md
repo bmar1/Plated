@@ -64,26 +64,9 @@ Know how much you save compared to the average Canadian, at any time
 ### Ease of use
 We offer an easy UI to navigate through to help you day-by-day to cook, and plan your meals!
 
-![Dashboard](./src/frontend/public/home.png)
-
----
-
-##  Architecture
-
-Plated uses a containerized architecture deployed on AWS, ensuring scalability and reliability.
-
-![Architecture Diagram](./src/frontend/public/diagram.jpg)
-
-### How it works
-
-- **NGINX** acts as a reverse proxy, routing incoming HTTPS requests from `plated-app.online` to the appropriate containers
-- **Frontend Container (React)** serves the user interface on port 80
-- **Backend Container (Spring Boot)** handles API requests on port 8080, processing business logic and authentication
-- **PostgreSQL Database** runs on AWS RDS, providing reliable data persistence separate from the application containers
-- **Docker** containerizes both frontend and backend, making deployment consistent across environments
-- **EC2** hosts the entire application stack, with all containers running within a single instance for cost-effective production deployment
-
-This architecture allows for easy local development with Docker Compose while maintaining production-grade deployment on AWS infrastructure.
+<p align="center">
+  <img src="./src/frontend/public/home.png" alt="Dashboard" width="600">
+</p>
 
 ---
 
