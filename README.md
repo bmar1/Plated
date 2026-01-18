@@ -74,7 +74,7 @@ We offer an easy UI to navigate through to help you day-by-day to cook, and plan
 
 ## Architecture
 
-Plated uses a containerized microservices architecture deployed on AWS, ensuring scalability and reliability.
+Plated uses a containerized service architecture deployed on AWS, ensuring scalability and reliability.
 
 <p align="center">
   <img src="./src/frontend/public/diagram.jpg" alt="Architecture Diagram" width="700">
@@ -89,7 +89,7 @@ Plated uses a containerized microservices architecture deployed on AWS, ensuring
 - **Docker** containerizes both frontend and backend, making deployment consistent across environments
 - **EC2** hosts the entire application stack, with all containers running within a single instance for cost-effective production deployment
 
-This architecture allows for easy local development with Docker Compose while maintaining production-grade deployment on AWS infrastructure.
+This architecture allows for easy local development with Docker Compose while maintaining production-grade deployment on AWS infrastructure, with this in mind, it handles scale well, and can be adjusted.
 
 ---
 
