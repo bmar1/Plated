@@ -72,7 +72,7 @@ We offer an easy UI to navigate through to help you day-by-day to cook, and plan
 
 Plated uses a containerized architecture deployed on AWS, ensuring scalability and reliability.
 
-![Architecture Diagram](./src/frontend/public/diagram.JPG)
+![Architecture Diagram](./src/frontend/public/diagram.jpg)
 
 ### How it works
 
