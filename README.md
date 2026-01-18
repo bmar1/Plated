@@ -72,7 +72,7 @@ We offer an easy UI to navigate through to help you day-by-day to cook, and plan
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 Plated uses a containerized microservices architecture deployed on AWS, ensuring scalability and reliability.
 
@@ -102,7 +102,7 @@ Currently, plated is hosted full-stack on EC2. If you'd like to run it yourself 
 
 ---
 
-### 🐳 Quick Start with Docker (Recommended)
+###  Quick Start with Docker (Recommended)
 
 The fastest way to get Plated running locally:
 
@@ -122,8 +122,6 @@ docker-compose up --build
 # Frontend: http://localhost:3000
 # Backend API: http://localhost:8080
 ```
-
-That's it! Docker will handle setting up the database, backend, and frontend automatically.
 
 #### Docker Commands
 
@@ -176,7 +174,7 @@ Plated/
 
 ---
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
 ### Backend
 - **Spring Boot 3.5** - Robust Java framework for RESTful APIs
