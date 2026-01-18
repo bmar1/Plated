@@ -93,15 +93,6 @@ This architecture allows for easy local development with Docker Compose while ma
 
 ---
 
-## Getting Started
-
-Currently, plated is hosted full-stack on EC2. If you'd like to run it yourself you'll need:
-- AWS RDS, EC2 instances
-- Pg Admin
-- API keys (Walmart with public/private keys, MealDB, Nutritionix which is now deprecated)
-
----
-
 ###  Quick Start with Docker (Recommended)
 
 The fastest way to get Plated running locally:
