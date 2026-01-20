@@ -56,7 +56,7 @@ This application, based on your requirements and use cases, adapts to help you f
 Need help tracking how many calories you eat or what exactly you're eating? Say no more! Plated easily tracks your weekly meals in a clean, organized format, to make sure you never overeat.
 
 ###  Security
-Plated boasts secure, role-based access control throughout the app, enforcing security through JWT tokens.
+Plated uses secure, role-based access control throughout the app, enforcing security through JWT tokens.
 
 ### Analytics
 Know how much you save compared to the average Canadian, at any time
