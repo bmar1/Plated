@@ -24,8 +24,8 @@ const RecipePage = () => {
     try {
       const token = localStorage.getItem('token');
 
-      const url = `http://localhost:8080/api/meals/updateMeal?name=${encodeURIComponent(name)}`;
-      console.log('Request URL:', url);
+      const url = `/api/meals/updateMeal?name=${encodeURIComponent(name)}`;
+      
 
       const response = await fetch(url, {
         method: 'PUT',
@@ -36,12 +36,12 @@ const RecipePage = () => {
       });
 
       if (response.ok) {
-        console.log(`Meal '${name}' marked as eaten.`);
+        
       } else {
-        console.error('Failed to mark meal as eaten:', response.status);
+        
       }
     } catch (error) {
-      console.error('Error marking meal as eaten:', error);
+      
     }
   };
 
@@ -58,7 +58,7 @@ const RecipePage = () => {
       try {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
-        const response = await fetch(`http://localhost:8080/api/meal?name=${encodedName}`, {
+        const response = await fetch(`/api/meal?name=${encodedName}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -70,11 +70,11 @@ const RecipePage = () => {
           const data = await response.json();
           setRecipe(Array.isArray(data) ? data[0] : data);
         } else {
-          console.error('Failed to load meal:', response.status);
+          
           setRecipe(null);
         }
       } catch (error) {
-        console.error('Error loading meal:', error);
+        
         setRecipe(null);
       } finally {
         setLoading(false);
@@ -135,7 +135,7 @@ const RecipePage = () => {
         try {
           await markMealAsEaten();
         } catch (error) {
-          console.error('Failed to mark meal as eaten:', error);
+          
         }
       }
     };

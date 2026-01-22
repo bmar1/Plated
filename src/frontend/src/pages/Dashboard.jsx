@@ -133,7 +133,7 @@ export default function Dashboard() {
     try {
       localStorage.removeItem('email');
       localStorage.removeItem('token');
-      console.log('Auth cleared.');
+      
     } catch (error) {
       console.error('Error clearing auth:', error);
     }
@@ -219,7 +219,7 @@ export default function Dashboard() {
     // 2. Always fetch from the API in the background
     try {
       console.log('Fetching from API in the background...');
-      const response = await fetch(`http://localhost:8080/api/load`, {
+      const response = await fetch(`/api/load`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

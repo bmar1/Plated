@@ -20,7 +20,7 @@ const GroceryListPage = () => {
   const loadGrocery = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/meals/groceryList`, {
+      const response = await fetch(`/api/meals/groceryList`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -35,11 +35,11 @@ const GroceryListPage = () => {
 
         setGroceryList(uniqueList);
       } else {
-        console.error('Failed to load grocery list:', response.status);
+        
         setGroceryList([]);
       }
     } catch (error) {
-      console.error('Error loading grocery list:', error);
+      
       setGroceryList([]);
     } finally {
       setIsLoading(false);
@@ -101,7 +101,7 @@ const GroceryListPage = () => {
     const itemsParams = groceryList
       .map((item, index) => {
         if (!item.productUrl) {
-          console.warn(`Item #${index} has no product_url`);
+          
           return null;
         }
 
@@ -118,10 +118,10 @@ const GroceryListPage = () => {
 
     if (itemsParams) {
       const finalUrl = `${baseUrl}${itemsParams}`;
-      console.log('Generated Final URL:', finalUrl);
+      
       openNewTab(finalUrl);
     } else {
-      console.error('Failed to generate any IDs. Check console logs above.');
+      
       alert('Could not find any valid items to add.');
     }
   };

@@ -30,7 +30,7 @@ export default function AllMeals() {
 
   const loadMeals = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/meals`, {
+      const response = await fetch(`/api/meals`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
