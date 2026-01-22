@@ -13,6 +13,9 @@ const Footer = () => {
             <p className="text-sm text-gray-200">
               Plan meals, track calories, and save money effortlessly.
             </p>
+            <a href="https://github.com/bmar1/plated.git" target="_blank" rel="noopener noreferrer" className="text-gray-200 hover:text-white transition-colors block mt-2">
+                GitHub
+            </a>
           </div>
           <div>
             <h4 className="font-semibold mb-3">Product</h4>
@@ -67,11 +70,7 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-3">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="text-gray-200 hover:text-white transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
+
               <li>
                 <a href="#" className="text-gray-200 hover:text-white transition-colors">
                   Terms of Service

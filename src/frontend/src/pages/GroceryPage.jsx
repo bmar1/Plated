@@ -35,7 +35,7 @@ const GroceryListPage = () => {
 
         setGroceryList(uniqueList);
       } else {
-        
+        console.error('Failed to load grocery list:', response.status);
         setGroceryList([]);
       }
     } catch (error) {

@@ -25,7 +25,6 @@ const RecipePage = () => {
       const token = localStorage.getItem('token');
 
       const url = `/api/meals/updateMeal?name=${encodeURIComponent(name)}`;
-      
 
       const response = await fetch(url, {
         method: 'PUT',
@@ -36,13 +35,9 @@ const RecipePage = () => {
       });
 
       if (response.ok) {
-        
       } else {
-        
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   const handleBack = () => {
@@ -70,11 +65,10 @@ const RecipePage = () => {
           const data = await response.json();
           setRecipe(Array.isArray(data) ? data[0] : data);
         } else {
-          
           setRecipe(null);
         }
       } catch (error) {
-        
+        console.error('Error fetching recipe:', error);
         setRecipe(null);
       } finally {
         setLoading(false);
@@ -134,9 +128,7 @@ const RecipePage = () => {
       if (mealEaten && name) {
         try {
           await markMealAsEaten();
-        } catch (error) {
-          
-        }
+        } catch (error) {}
       }
     };
 
