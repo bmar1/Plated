@@ -32,7 +32,7 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
     setShowLoading(true);
 
     try {
-      const res = await fetch('/api/onboarding', {
+      const res = await fetch('http://localhost:8080/api/onboarding', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
                       </motion.p>
                       <p className="text-slate-600 text-sm">calories per day</p>
                     </div>
-                     <div className="relative mt-4">
+                    <div className="relative mt-4">
                       <input
                         type="range"
                         min="1400"
@@ -197,7 +197,9 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
                         value={formData.calories}
                         onChange={(e) => setFormData({ ...formData, calories: e.target.value })}
                         className="w-full h-2 rounded-lg appearance-none cursor-pointer slider"
-                        style={{ background: `linear-gradient(to right, #A8C995 ${caloriePercentage}%, #e2e8f0 ${caloriePercentage}%, #e2e8f0 100%)` }}
+                        style={{
+                          background: `linear-gradient(to right, #A8C995 ${caloriePercentage}%, #e2e8f0 ${caloriePercentage}%, #e2e8f0 100%)`
+                        }}
                       />
                     </div>
                   </motion.div>
@@ -227,7 +229,7 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
                       ))}
                     </div>
                     <div className="mt-4 text-center">
-                       <motion.p
+                      <motion.p
                         key={formData.budget}
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -245,13 +247,15 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
                       value={formData.budget}
                       onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                       className="w-full h-2 mt-4 rounded-lg appearance-none cursor-pointer slider"
-                      style={{ background: `linear-gradient(to right, #A8C995 ${budgetPercentage}%, #e2e8f0 ${budgetPercentage}%, #e2e8f0 100%)` }}
+                      style={{
+                        background: `linear-gradient(to right, #A8C995 ${budgetPercentage}%, #e2e8f0 ${budgetPercentage}%, #e2e8f0 100%)`
+                      }}
                     />
                   </motion.div>
                 )}
 
                 {step === 3 && (
-                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                     <h2 className="text-2xl font-bold mb-2 text-slate-800">Meals per Day</h2>
                     <p className="text-slate-600 text-sm mb-6">How many main meals do you eat?</p>
                     <div className="grid grid-cols-2 gap-4">
@@ -267,8 +271,8 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
                               ? 'bg-[#A8C995] text-slate-800 scale-105'
                               : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
                           }`}
-                           whileHover={{ scale: 1.03 }}
-                           whileTap={{ scale: 0.97 }}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
                         >
                           <div className="text-3xl font-bold mb-2">{option.value}</div>
                           <div className="font-semibold">{option.label}</div>
@@ -294,9 +298,9 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
                         onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
                         className="w-full p-3 rounded-lg bg-slate-100 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#A8C995]"
                       />
-                       <p className="text-xs text-slate-500 mt-2">
-                         We'll automatically filter out these ingredients.
-                       </p>
+                      <p className="text-xs text-slate-500 mt-2">
+                        We'll automatically filter out these ingredients.
+                      </p>
                     </div>
                   </motion.div>
                 )}

@@ -286,8 +286,6 @@ public class MainController {
             log.info("MealPlan ID: {}, Planned: {}, Eaten: {}",
                     mealPlan.getId(), mealPlan.isPlanned(), mealPlan.isEaten());
 
-            // Save the user with the updated meal plan
-            userRepository.save(user);
 
             return ResponseEntity.ok()
                     .body(Map.of(

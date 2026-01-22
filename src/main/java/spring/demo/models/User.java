@@ -35,12 +35,15 @@ public class User implements UserDetails {
     private Role role;
 
     private UserPreference preferences;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user",
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     private List<UserMealPlan> mealPlans = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user",
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
     private List<UserIngredient> groceryList = new ArrayList<>();
-
 
     public Long getId() {
         return id;

@@ -16,22 +16,26 @@ import Nav from '../components/Navbar';
 import NewMealPlanShowcase from '../components/NewMealShowcase';
 import LoadingScreen from './LoadingScreen';
 
+// --- Caching Configuration ---
+const ENABLE_CACHE = true;
+const CACHE_KEY = 'dashboard_cache_data';
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
 export default function Dashboard() {
   const navigate = useNavigate();
+  // State variables
   const [showOnboarding, setShowOnboarding] = useState(false);
-  //states
   const [isNavVisible, setIsNavVisible] = useState(false);
-  const previousMealIdsRef = useRef(null);
   const [meals, setMeals] = useState([]);
   const [showNewMealPlan, setShowNewMealPlan] = useState(false);
   const [mealPreview, setMealPreview] = useState([]);
   const [grocery, setGrocery] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [usedCache, setUsedCache] = useState(false);
   const [groceryPreview, setGroceryPreview] = useState([]);
   const [isGroceryLoading, setIsGroceryLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
-  //nav
   const [eaten, setEaten] = useState(0);
   const [target, setTarget] = useState(0);
   const [remaining, setRemaining] = useState(0);
@@ -40,14 +44,18 @@ export default function Dashboard() {
   const [shouldNavigate, setShouldNavigate] = useState(false);
   const [budget, setBudget] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // --- Navigation Handlers ---
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    clearAuth();
+    clearCache();
     navigate('/');
   };
 
   const handleRecipeClick = (recipeName) => {
     navigate('/recipe', { state: { name: recipeName } });
   };
+
   const handlePotential = () => {
     navigate('/all-meals');
   };
@@ -58,36 +66,24 @@ export default function Dashboard() {
     }
   };
 
+  // --- Effects ---
   useEffect(() => {
     const onboardingStatus = localStorage.getItem('onboarding');
     if (onboardingStatus === 'true') {
       setShowOnboarding(true);
       setIsInitialLoad(false);
-    } else {
-      setShowOnboarding(false);
-      // Load data on initial mount if onboarding is complete
-      if (isInitialLoad) {
-        loadDashboardData();
-        setIsInitialLoad(false);
-      }
+    } else if (isInitialLoad) {
+      loadDashboardData();
+      setIsInitialLoad(false);
     }
   }, []);
 
   useEffect(() => {
-    // Only load if:
-    // 1. Not showing onboarding
-    // 2. Not showing loading screen
-    // 3. Data is empty (hasn't been loaded yet)
-    const stored = localStorage.getItem('previousMealNames');
-    if (stored) {
-      previousMealIdsRef.current = stored;
-    }
     if (!showOnboarding && !isLoading && grocery.length === 0 && meals.length === 0) {
       loadDashboardData();
     }
   }, [showOnboarding, isLoading]);
 
-  //navigate to the grocery page when needed
   useEffect(() => {
     if (shouldNavigate && grocery) {
       navigate('/grocery', { state: { grocery: grocery } });
@@ -95,116 +91,186 @@ export default function Dashboard() {
     }
   }, [grocery, shouldNavigate, navigate]);
 
-  //loads all relevant data to page
+  // --- Cache Helper Functions ---
+  const getCache = () => {
+    try {
+      const cachedItem = localStorage.getItem(CACHE_KEY);
+      if (!cachedItem) return null;
+
+      const { timestamp, data } = JSON.parse(cachedItem);
+      const isExpired = Date.now() - timestamp > CACHE_DURATION;
+
+      return { data, isExpired };
+    } catch (error) {
+      console.error('Error getting cache:', error);
+      return null;
+    }
+  };
+
+  const setCache = (data) => {
+    try {
+      const itemToCache = {
+        timestamp: Date.now(),
+        data: data
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
+      console.log('Cache set successfully.');
+    } catch (error) {
+      console.error('Error setting cache:', error);
+    }
+  };
+
+  const clearCache = () => {
+    try {
+      localStorage.removeItem(CACHE_KEY);
+      console.log('Cache cleared.');
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+    }
+  };
+
+  const clearAuth = () => {
+    try {
+      localStorage.removeItem('email');
+      localStorage.removeItem('token');
+      console.log('Auth cleared.');
+    } catch (error) {
+      console.error('Error clearing auth:', error);
+    }
+  };
+
+  // --- Data Processing and State Update Helpers ---
+
+  const getNormalizedWords = (name) => {
+    if (!name) return [];
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z\s]/g, '')
+      .split(/\s+/)
+      .filter((word) => word.length > 2)
+      .map((word) => word.replace(/s$/, '').replace(/es$/, ''));
+  };
+
+  const getSimilarityScore = (name1, name2) => {
+    const words1 = getNormalizedWords(name1);
+    const words2 = getNormalizedWords(name2);
+
+    if (words1.length === 0 || words2.length === 0) return 0;
+
+    const matches = words1.filter((word) => words2.includes(word)).length;
+    const totalWords = Math.max(words1.length, words2.length);
+
+    return matches / totalWords;
+  };
+
+  const filterGroceryList = (list) => {
+    const filteredList = [];
+    const seenItems = [];
+
+    list.forEach((item) => {
+      if (!item || !item.name || item.name.toLowerCase() === 'null') {
+        return;
+      }
+      const normalizedName = item.name.toLowerCase().trim();
+      const isSimilar = seenItems.some((seenItem) => {
+        const similarity = getSimilarityScore(normalizedName, seenItem.name);
+        return similarity >= 0.5;
+      });
+
+      if (!isSimilar) {
+        filteredList.push(item);
+        seenItems.push({ name: normalizedName, original: item });
+      }
+    });
+
+    return filteredList;
+  };
+
+  const updateDashboardState = (data) => {
+    const filteredGrocery = filterGroceryList(data.groceryList);
+    setMeals(data.selectedMeals);
+    setRemaining(data.remaining);
+    setBudget(data.budget);
+    setTarget(data.target);
+    setEaten(data.eaten);
+    setProgress(data.progress);
+    setMealPreview(data.randomMeals);
+    setGrocery(filteredGrocery);
+    setGroceryPreview(filteredGrocery.slice(0, 3));
+    setIsGroceryLoading(false);
+  };
+
+  // --- Main Data Loading Function ---
   const loadDashboardData = async () => {
     setIsLoading(true);
 
+    // 1. Immediately try to load from cache for a fast initial experience
+    const cached = getCache();
+    if (cached && !cached.isExpired) {
+      console.log('Cache hit. Loading data instantly.');
+      updateDashboardState(cached.data);
+      setUsedCache(true);
+      setIsLoading(false);
+    } else {
+      console.log('Cache miss or expired. Will show loading screen until API fetch is complete.');
+    }
+
+    // 2. Always fetch from the API in the background
     try {
-      const response = await fetch(`/api/load`, {
+      console.log('Fetching from API in the background...');
+      const response = await fetch(`http://localhost:8080/api/load`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
+
       if (!response.ok) {
-        console.error('Failed to load dashboard data:', response.status);
-        setMeals([]);
-        setMealPreview([]);
-        setGrocery([]);
-        setGroceryPreview([]);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
-      const currentMealNames = data.selectedMeals
-        .map((meal) => meal.name)
-        .sort()
-        .join('|');
 
-      if (previousMealIdsRef.current !== null) {
-        const hasDifference = previousMealIdsRef.current !== currentMealNames;
+      const newData = await response.json();
+
+      // 3. Compare new data with cached data
+      if (cached && !cached.isExpired) {
+        const oldMealIds = cached.data.selectedMeals.map((m) => m.id).sort();
+        const newMealIds = newData.selectedMeals.map((m) => m.id).sort();
+        const hasDifference = JSON.stringify(oldMealIds) !== JSON.stringify(newMealIds);
+
         if (hasDifference) {
+          console.log('Meal plan has changed. Invalidating cache and showing popup.');
+          setShowNewMealPlan(true);
+          updateDashboardState(newData); // Update the UI with the new data
+        }
+      } else {
+        // If there was no cache or it was expired, we are showing the loading screen,
+        // so just update the state with the new data.
+        updateDashboardState(newData);
+        if(!cached){
           setShowNewMealPlan(true);
         }
       }
 
-      previousMealIdsRef.current = currentMealNames;
-      localStorage.setItem('previousMealNames', currentMealNames);
+      // 4. Update the cache with the new data
+      setCache(newData);
 
-      setMeals(data.selectedMeals);
-      setRemaining(data.remaining);
-      setBudget(data.budget);
-      setTarget(data.target);
-      setEaten(data.eaten);
-      setProgress(data.progress);
-      setBudget(data.budget);
-      setMealPreview(data.randomMeals);
-      const getNormalizedWords = (name) => {
-        if (!name) return [];
-        return name
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z\s]/g, '')
-          .split(/\s+/)
-          .filter((word) => word.length > 2)
-          .map((word) => word.replace(/s$/, '').replace(/es$/, ''));
-      };
-
-      // Helper function to calculate similarity between two items
-      const getSimilarityScore = (name1, name2) => {
-        const words1 = getNormalizedWords(name1);
-        const words2 = getNormalizedWords(name2);
-
-        if (words1.length === 0 || words2.length === 0) return 0;
-
-        const matches = words1.filter((word) => words2.includes(word)).length;
-        const totalWords = Math.max(words1.length, words2.length);
-
-        return matches / totalWords;
-      };
-
-      const filteredList = [];
-      const seenItems = [];
-
-      data.groceryList.forEach((item) => {
-        if (!item || !item.name || item.name.toLowerCase() === 'null') {
-          return; // Skip invalid items
-        }
-
-        const normalizedName = item.name.toLowerCase().trim();
-
-        // Check if this item is similar to any already seen item
-        const isSimilar = seenItems.some((seenItem) => {
-          const similarity = getSimilarityScore(normalizedName, seenItem.name);
-          // If 50% or more words match, consider it a duplicate
-          return similarity >= 0.5;
-        });
-
-        if (!isSimilar) {
-          filteredList.push(item);
-          seenItems.push({ name: normalizedName, original: item });
-        }
-      });
-
-      console.log(
-        `Fuzzy filtered grocery list: ${data.groceryList.length} -> ${filteredList.length} items`
-      );
-
-      setGrocery(filteredList);
-      setIsGroceryLoading(false);
-      setGroceryPreview(data.groceryList.slice(0, 3));
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      // Clear potentially bad cache on error
+      clearCache();
       setMeals([]);
       setMealPreview([]);
       setProgress(0);
       setGrocery([]);
       setGroceryPreview([]);
     } finally {
-      // Keep loading screen for minimum time
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 5500);
+        if (!usedCache) {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 5500);
+        }
     }
   };
 
