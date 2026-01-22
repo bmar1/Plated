@@ -13,8 +13,6 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 
 **Try it now:** [Full App](https://plated-app.online/landing)
 
-*Frontend preview:* [Frontend](https://pantry-assist.vercel.app/landing)
-
 ---
 
 ## Demo Photos
@@ -37,13 +35,7 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 
 ##  Objective
 
-This project, 'plated' aims to serve those who are on a budget or want help tracking what they eat — from calories to trying new foods — all in a way that's easy to manage through the app, so you can spend more time doing what's important to you!
-
----
-
-## Why use it?
-
-Plated offers a simple solution to everyday issues, meal planning and buying groceries. Instead of spending more time figuring out what to get, just get a meal plan on us, and only buy the groceries and cook the delicious meals!
+This project, plated aims to serve those who are on a budget or want help tracking what they eat — from calories to trying new foods — all in a way that's easy to manage through the app, so you can spend more time doing what's important to you!
 
 ---
 
@@ -119,12 +111,6 @@ docker-compose up --build
 ```bash
 # Start services in detached mode
 docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
 
 # Stop services and remove volumes (fresh start)
 docker-compose down -v
