@@ -30,7 +30,9 @@ export default function AuthForm() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('email', email);
 
-      if (!isLogin) {
+      if (isLogin) {
+        localStorage.removeItem('onboarding');
+      } else {
         localStorage.setItem('onboarding', true);
       }
       navigate('/dashboard');
