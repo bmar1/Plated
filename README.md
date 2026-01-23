@@ -74,7 +74,7 @@ Plated uses a containerized service architecture deployed on AWS, ensuring scala
 
 ### How it works
 
-- **NGINX** acts as a reverse proxy, routing incoming HTTPS requests from `plated-app.online` to the appropriate containers
+- **NGINX** acts as a reverse proxy, routing incoming HTTPS requests from `plated-app.online` to the appropriate containers, based on route calls
 - **Frontend Container (React)** serves the user interface on port 80
 - **Backend Container (Spring Boot)** handles API requests on port 8080, processing business logic and authentication
 - **PostgreSQL Database** runs on AWS RDS, providing reliable data persistence separate from the application containers
