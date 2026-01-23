@@ -552,7 +552,7 @@ export default function Landing() {
           ))}
         </div>
       </motion.div>
-      <Footer />
+      <Footer isLandingPage={true} />
     </div>
   );
 }

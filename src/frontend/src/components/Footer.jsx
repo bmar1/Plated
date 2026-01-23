@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Footer = () => {
+const Footer = ({ isLandingPage }) => {
   return (
     <footer id="pricing" className="bg-[#5A7A4D] text-white py-8 mt-auto">
       <div className="max-w-6xl mx-auto px-8">
@@ -21,17 +21,17 @@ const Footer = () => {
             <h4 className="font-semibold mb-3">Product</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-gray-200 hover:text-white transition-colors">
+                <a href={isLandingPage ? "#features" : "#"} className="text-gray-200 hover:text-white transition-colors">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-200 hover:text-white transition-colors">
+                <a href={isLandingPage ? "#process" : "#"} className="text-gray-200 hover:text-white transition-colors">
                   How It Works
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-200 hover:text-white transition-colors">
+                <a href={isLandingPage ? "#pricing" : "#"} className="text-gray-200 hover:text-white transition-colors">
                   Pricing
                 </a>
               </li>
