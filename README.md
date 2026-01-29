@@ -109,7 +109,7 @@ docker-compose up --build
 #### Docker Commands
 
 ```bash
-# Start services in detached mode
+# Start services 
 docker-compose up -d
 
 # Stop services and remove volumes (fresh start)
