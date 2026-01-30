@@ -9,34 +9,31 @@ export default function LoadingScreen() {
   const [fadeOut, setFadeOut] = useState(false);
 
   return (
-    <div
-      className="fixed inset-0 flex flex-col items-center justify-center z-50 bg-green-500/10 backdrop-blur-xl"
-    >
-        {/* Pulsing circle */}
-        <div className="mb-8">
-          <div
-            className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center"
-            style={{
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-            }}
-          >
-            <div className="w-10 h-10 bg-white/40 rounded-full"></div>
-          </div>
+    <div className="fixed inset-0 flex flex-col items-center justify-center z-50 bg-green-500/15 backdrop-blur-xl">
+      {/* Pulsing circle */}
+      <div className="mb-8">
+        <div
+          className="w-16 h-16 bg-green-400/30 rounded-full flex items-center justify-center"
+          style={{
+            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+          }}
+        >
+          <div className="w-10 h-10 bg-green-400/60 rounded-full"></div>
         </div>
+      </div>
 
-        <h1 className="text-white text-2xl font-medium mb-10 tracking-wide">Loading...</h1>
+      <h1 className="text-green-100 text-2xl font-medium mb-10 tracking-wide">Loading...</h1>
 
-        {/* Modern progress bar */}
-        <div className="w-80 h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-white rounded-full shadow-lg"
-            style={{
-              animation: 'progressBar 5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-              boxShadow: '0 0 20px rgba(255, 255, 255, 0.5)'
-            }}
-          ></div>
-        </div>
-
+      {/* Modern progress bar */}
+      <div className="w-80 h-1.5 bg-green-300/20 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-green-400 rounded-full shadow-lg"
+          style={{
+            animation: 'progressBar 5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+            boxShadow: '0 0 20px rgba(34, 197, 94, 0.6)' // emerald glow
+          }}
+        ></div>
+      </div>
 
       <style jsx>{`
         @keyframes progressBar {
@@ -53,10 +50,6 @@ export default function LoadingScreen() {
           100% {
             transform: scale(1);
             opacity: 1;
-          }
-          50% {
-            transform: scale(1.1);
-            opacity: 0.8;
           }
         }
       `}</style>
