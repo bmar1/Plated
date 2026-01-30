@@ -184,7 +184,6 @@ Otherwise, feel free to leave some issues or pull requests!
 - TheMealDB for recipe data
 - Walmart API for grocery pricing
 - Nutritionix API for calories/macros
-- The open-source community for inspiration and tools
 
 ---
 
