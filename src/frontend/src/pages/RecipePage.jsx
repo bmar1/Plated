@@ -24,7 +24,7 @@ const RecipePage = () => {
     try {
       const token = localStorage.getItem('token');
 
-      const url = `http://localhost:8080/api/meals/updateMeal?name=${encodeURIComponent(name)}`;
+      const url = `/api/meals/updateMeal?name=${encodeURIComponent(name)}`;
 
       const response = await fetch(url, {
         method: 'PUT',
@@ -54,7 +54,7 @@ const RecipePage = () => {
       try {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
-        const response = await fetch(`http://localhost:8080/api/meal?name=${encodedName}`, {
+        const response = await fetch(`/api/meal?name=${encodedName}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

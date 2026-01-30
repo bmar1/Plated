@@ -217,7 +217,7 @@ export default function Dashboard() {
     }
     try {
       console.log('Fetching from API in the background...');
-      const response = await fetch(`http://localhost:8080/api/load`, {
+      const response = await fetch(`api/load`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

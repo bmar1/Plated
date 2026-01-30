@@ -1,14 +1,14 @@
 /**
- * @file navbar.jsx
- * @description This component renders the application's sidebar navigation menu.
- * It includes links to the main pages, a summary of calorie intake, and options
- * for settings and logging out. The navbar can be expanded or collapsed.
+ * @file Navbar.jsx
+ * @description Refined sidebar navigation with subtle UX improvements
+ * Keeps original green color scheme (#628d45) with enhanced polish and micro-interactions
+ * No calorie counter, minimal changes, just better UX
  */
 
 import React from 'react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Nav({
   isNavVisible,
@@ -21,9 +21,13 @@ export default function Nav({
   caloriesTarget
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const showBar = () => {
     setIsNavVisible(!isNavVisible);
   };
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div>
@@ -37,10 +41,10 @@ export default function Nav({
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed top-0 left-0 h-screen w-60 bg-[#628d45] text-white flex flex-col p-4 z-40 shadow-lg"
           >
-            {/* Main nav links */}
+            {/* Toggle button */}
             <div className="flex justify-end w-full">
               <button
-                className="p-3 rounded-lg hover:bg-[#A8C995] transition-colors duration-200 flex items-center justify-center"
+                className="p-3 rounded-lg hover:bg-[#A8C995] active:scale-95 transition-all duration-200 flex items-center justify-center"
                 onClick={showBar}
               >
                 <img
@@ -52,12 +56,13 @@ export default function Nav({
               </button>
             </div>
 
+            {/* Logo section */}
             <div className="flex flex-col space-y-4 mb-6">
               <div className="flex flex-col items-start w-full">
                 <img
                   src="/favicon-v1.png"
-                  alt="PLated Logo"
-                  className="w-[8rem] h-[6.5rem] object-contain"
+                  alt="Plated Logo"
+                  className="w-[8rem] h-[6.5rem] object-contain drop-shadow-md"
                 />
                 <h1 className="text-3xl font-semibold text-white tracking-wide mt-2 ml-4">
                   Plated
@@ -65,10 +70,15 @@ export default function Nav({
               </div>
             </div>
 
-            <div className="flex flex-col space-y-4 flex-grow">
+            {/* Navigation links */}
+            <div className="flex flex-col space-y-2 flex-grow">
               <Link
                 to="/dashboard"
-                className="flex items-center gap-3 hover:bg-[#94bf7f] p-2 rounded-lg font-medium"
+                className={`flex items-center gap-3 p-2 rounded-lg font-medium transition-all duration-200 ${
+                  isActive('/dashboard')
+                    ? 'bg-[#94bf7f] shadow-md scale-[1.02]'
+                    : 'hover:bg-[#94bf7f] active:scale-95'
+                }`}
               >
                 <img
                   src="/icons/home.png"
@@ -80,8 +90,12 @@ export default function Nav({
               </Link>
 
               <Link
-                to="/all-meals" // Assuming this is the correct path for "Your Recipes"
-                className="flex items-center gap-3 hover:bg-[#94bf7f] p-2 rounded-lg font-medium"
+                to="/all-meals"
+                className={`flex items-center gap-3 p-2 rounded-lg font-medium transition-all duration-200 ${
+                  isActive('/all-meals')
+                    ? 'bg-[#94bf7f] shadow-md scale-[1.02]'
+                    : 'hover:bg-[#94bf7f] active:scale-95'
+                }`}
               >
                 <img
                   src="/icons/recipes.png"
@@ -94,7 +108,11 @@ export default function Nav({
 
               <Link
                 to="/grocery"
-                className="flex items-center gap-3 hover:bg-[#94bf7f] p-2 rounded-lg font-medium"
+                className={`flex items-center gap-3 p-2 rounded-lg font-medium transition-all duration-200 ${
+                  isActive('/grocery')
+                    ? 'bg-[#94bf7f] shadow-md scale-[1.02]'
+                    : 'hover:bg-[#94bf7f] active:scale-95'
+                }`}
               >
                 <img
                   src="/icons/groceryIcon.png"
@@ -107,46 +125,27 @@ export default function Nav({
 
               <Link
                 to="/analytics"
-                className="flex items-center gap-3 hover:bg-[#94bf7f] p-2 rounded-lg font-medium"
+                className={`flex items-center gap-3 p-2 rounded-lg font-medium transition-all duration-200 ${
+                  isActive('/analytics')
+                    ? 'bg-[#94bf7f] shadow-md scale-[1.02]'
+                    : 'hover:bg-[#94bf7f] active:scale-95'
+                }`}
               >
                 <img
                   src="/icons/result.png"
-                  alt="analytics"
+                  alt="Analytics"
                   className="w-5 h-5"
                   style={{ filter: 'invert(1) brightness(2)' }}
-                ></img>
+                />
                 Analytics
               </Link>
             </div>
 
-            <div className="rounded-2xl mb-5 bg-white border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-xs text-[#b0a384] font-medium uppercase tracking-wider mb-1">
-                    Today's Calories
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-slate-900">{caloriesEaten}</span>
-                    <span className="text-slate-400 text-lg">/</span>
-                    <span className="text-2xl font-semibold text-[#b0a384]">{caloriesTarget}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-[#b0a384] h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-
-              <p className="text-xs text-[#b0a384] mt-2 text-center">{progress}% of daily goal</p>
-            </div>
-
-            <div className="mt-auto">
+            {/* Bottom actions */}
+            <div className="mt-auto space-y-2">
               <button
                 onClick={() => setShowSettings(true)}
-                className="flex items-center gap-3 mb-2 hover:bg-[#94bf7f] p-2 rounded-lg font-medium w-full text-left"
+                className="flex items-center gap-3 hover:bg-[#94bf7f] active:scale-95 p-2 rounded-lg font-medium w-full text-left transition-all duration-200"
               >
                 <img
                   src="/icons/settings.png"
@@ -159,7 +158,7 @@ export default function Nav({
 
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 hover:bg-[#94bf7f] p-2 rounded-lg font-medium w-full text-left"
+                className="flex items-center gap-3 hover:bg-[#94bf7f] active:scale-95 p-2 rounded-lg font-medium w-full text-left transition-all duration-200"
               >
                 <img
                   src="/icons/logout.png"
@@ -174,9 +173,13 @@ export default function Nav({
         )}
       </AnimatePresence>
 
+      {/* Collapsed sidebar */}
       {!isNavVisible && (
         <nav className="fixed top-0 left-0 h-screen w-14 bg-[#628d45] text-white flex flex-col p-2 z-40 shadow-lg items-center justify-between">
-          <button onClick={showBar} className="p-2 bg-[#628d45] rounded-lg hover:bg-[#5A7A4D] mt-2">
+          <button
+            onClick={showBar}
+            className="p-2 bg-[#628d45] rounded-lg hover:bg-[#5A7A4D] active:scale-95 mt-2 transition-all duration-200"
+          >
             <img
               src="/icons/bar.jpg"
               alt="Menu"
@@ -185,49 +188,103 @@ export default function Nav({
             />
           </button>
 
-          <div className="flex flex-col space-y-4 mb-auto mt-8">
-            <Link to="/dashboard" className="hover:bg-[#5A7A4D] p-2 rounded-lg">
+          <div className="flex flex-col space-y-3 mb-auto mt-8">
+            <Link
+              to="/dashboard"
+              className={`p-2 rounded-lg transition-all duration-200 relative group ${
+                isActive('/dashboard')
+                  ? 'bg-[#5A7A4D] shadow-md'
+                  : 'hover:bg-[#5A7A4D] active:scale-95'
+              }`}
+            >
               <img
                 src="/icons/home.png"
                 alt="Home"
                 className="w-7 h-7"
                 style={{ filter: 'invert(1) brightness(2)' }}
               />
+              {/* Tooltip */}
+              <div className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-sm font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                Home
+              </div>
             </Link>
-            <Link to="/all-meals" className="hover:bg-[#5A7A4D] p-2 rounded-lg">
+
+            <Link
+              to="/all-meals"
+              className={`p-2 rounded-lg transition-all duration-200 relative group ${
+                isActive('/all-meals')
+                  ? 'bg-[#5A7A4D] shadow-md'
+                  : 'hover:bg-[#5A7A4D] active:scale-95'
+              }`}
+            >
               <img
                 src="/icons/recipes.png"
                 alt="Recipes"
                 className="w-7 h-7"
                 style={{ filter: 'invert(1) brightness(2)' }}
               />
+              {/* Tooltip */}
+              <div className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-sm font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                Your Recipes
+              </div>
             </Link>
-            <Link to="/grocery" className="hover:bg-[#5A7A4D] p-2 rounded-lg">
+
+            <Link
+              to="/grocery"
+              className={`p-2 rounded-lg transition-all duration-200 relative group ${
+                isActive('/grocery')
+                  ? 'bg-[#5A7A4D] shadow-md'
+                  : 'hover:bg-[#5A7A4D] active:scale-95'
+              }`}
+            >
               <img
                 src="/icons/groceryIcon.png"
                 alt="Grocery"
                 className="w-7 h-7"
                 style={{ filter: 'invert(1) brightness(2)' }}
               />
+              {/* Tooltip */}
+              <div className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-sm font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                Grocery List
+              </div>
             </Link>
-            <Link to="" className="hover:bg-[#5A7A4D] p-2 rounded-lg">
+
+            <Link
+              to="/analytics"
+              className={`p-2 rounded-lg transition-all duration-200 relative group ${
+                isActive('/analytics')
+                  ? 'bg-[#5A7A4D] shadow-md'
+                  : 'hover:bg-[#5A7A4D] active:scale-95'
+              }`}
+            >
               <img
                 src="/icons/result.png"
-                alt="analytics"
+                alt="Analytics"
                 className="w-7 h-7"
                 style={{ filter: 'invert(1) brightness(2)' }}
               />
+              {/* Tooltip */}
+              <div className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-sm font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                Analytics
+              </div>
             </Link>
           </div>
 
           <div className="mb-2">
-            <button onClick={handleLogout} className="hover:bg-[#5A7A4D] p-2 rounded-lg">
+            <button
+              onClick={handleLogout}
+              className="hover:bg-[#5A7A4D] active:scale-95 p-2 rounded-lg transition-all duration-200 relative group"
+            >
               <img
                 src="/icons/logout.png"
                 alt="Logout"
                 className="w-7 h-7"
                 style={{ filter: 'invert(1) brightness(2)' }}
               />
+              {/* Tooltip */}
+              <div className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-sm font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                Log out
+              </div>
             </button>
           </div>
         </nav>

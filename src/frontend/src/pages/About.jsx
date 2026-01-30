@@ -171,7 +171,7 @@ const About = () => {
       )}
 
       {/* Hero Section */}
-      <div className="relative h-[70vh] w-full overflow-hidden">
+      <div className="relative h-[60vh] w-full overflow-hidden">
         <motion.div
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
