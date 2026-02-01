@@ -11,7 +11,7 @@ A full-stack application aimed to help you save food, tighten your budget, and p
 
 ## Live Demo
 
-**Try it now:** [Full App](https://plated-app.online/landing)
+**Try it now:** [Plated](https://plated-app.online/landing)
 
 ---
 
