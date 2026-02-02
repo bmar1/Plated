@@ -241,7 +241,7 @@ export default function Landing() {
       )}
 
       {/* Hero Section - GREEN - FIXED FOR MOBILE */}
-      <div className="relative flex items-center justify-center min-h-[85vh] sm:min-h-[92vh] px-4 overflow-hidden py-6 sm:py-0">
+      <div className="relative flex items-center justify-center min-h-[80vh] sm:min-h-[92vh] px-4 overflow-hidden py-6 sm:py-0">
         <div
           className="organic-blob w-[600px] h-[600px] bg-[#618c45] top-[-200px] left-[-100px] rounded-full"
           style={{ animationDelay: '0s' }}
@@ -255,7 +255,7 @@ export default function Landing() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-[65vh] sm:h-[75vh] w-full max-w-[110rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
+          className="relative h-[70vh] sm:h-[75vh] w-full max-w-[110rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
         >
           <img src="/hero.jpg" alt="Hero" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-transparent"></div>
@@ -265,7 +265,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-3 sm:mb-6"
+              className="mb-5 sm:mb-8"
             >
               <span className="inline-block bg-white/20 backdrop-blur-md text-white px-3 sm:px-6 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-widest border border-white/30">
                 WELLNESS MADE SIMPLE
@@ -276,7 +276,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-3xl sm:text-6xl lg:text-8xl font-bold mb-4 sm:mb-8 text-white leading-[1.1] tracking-tight"
+              className="text-3xl sm:text-6xl lg:text-8xl font-bold mb-4 sm:mb-10 text-white leading-[1.1] tracking-tight"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Meal planning and budget tracking,{' '}
@@ -287,7 +287,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="text-base sm:text-2xl lg:text-3xl mb-6 sm:mb-12 max-w-3xl text-white/95 font-light leading-relaxed"
+              className="text-base sm:text-2xl lg:text-3xl mb-6 sm:mb-14 max-w-3xl text-white/95 font-light leading-relaxed"
             >
               Plated is your meal planner and budget maintainer all in one — letting you focus on
               growing instead of tracking.
@@ -298,7 +298,7 @@ export default function Landing() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
               onClick={handleNavigation}
-              className="bg-white text-[#618c45] hover:bg-[#f5f9f3] px-7 sm:px-12 py-3.5 sm:py-5 rounded-full font-bold text-base sm:text-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105"
+              className="bg-white text-[#618c45] hover:bg-[#f5f9f3] px-6 mt-4 sm:px-12 py-3.5 sm:py-5 rounded-full font-bold text-base sm:text-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105"
             >
               Build Plan →
             </motion.button>
