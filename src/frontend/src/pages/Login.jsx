@@ -163,8 +163,8 @@ export default function AuthForm() {
         <div className="absolute top-1/4 left-1/3 w-2 h-2 rounded-full bg-[#618c45]/25"></div>
         <div className="absolute bottom-1/3 right-1/3 w-2.5 h-2.5 rounded-full bg-[#7ab05d]/20"></div>
 
-        {/* Subtle leaf/organic shapes */}
-        <div className="absolute top-24 left-24 w-32 h-32 opacity-5">
+        {/* Subtle leaf/organic shapes - hide on small mobile */}
+        <div className="hidden sm:block absolute top-24 left-24 w-32 h-32 opacity-5">
           <svg viewBox="0 0 100 100" className="w-full h-full text-[#618c45]">
             <path
               fill="currentColor"
@@ -172,7 +172,7 @@ export default function AuthForm() {
             />
           </svg>
         </div>
-        <div className="absolute bottom-32 right-24 w-40 h-40 opacity-5 rotate-45">
+        <div className="hidden sm:block absolute bottom-32 right-24 w-40 h-40 opacity-5 rotate-45">
           <svg viewBox="0 0 100 100" className="w-full h-full text-[#c9956d]">
             <path
               fill="currentColor"
@@ -194,83 +194,89 @@ export default function AuthForm() {
       </div>
 
       {/* Main Container */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-stretch max-w-5xl w-full elegant-shadow-hover hover:border-b-green-700 rounded-[32px] overflow-hidden bg-white/80 backdrop-blur-sm">
+      <div className="relative z-10 flex flex-col lg:flex-row items-stretch max-w-5xl w-full elegant-shadow-hover hover:border-b-green-700 rounded-[24px] sm:rounded-[32px] overflow-hidden bg-white/80 backdrop-blur-sm">
         {/* Left Side - Welcome Card */}
-        <div className="paper-texture bg-gradient-to-br from-[#f7f2e1] to-[#ede4c8] lg:w-1/2 p-10 sm:p-12 lg:p-14 flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <div className="paper-texture bg-gradient-to-br from-[#f7f2e1] to-[#ede4c8] lg:w-1/2 p-6 sm:p-10 lg:p-14 flex flex-col items-center justify-center text-center relative overflow-hidden">
           {/* Decorative corner accent */}
           <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 rounded-full blur-2xl"></div>
           <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#d4a574]/10 rounded-full blur-2xl"></div>
 
           <div className="relative z-10">
-            {/* Image */}
-            <div className="mb-8 inline-block floating-element" style={{ animationDelay: '0.2s' }}>
+            {/* Image - OPTIMIZED FOR MOBILE */}
+            <div
+              className="mb-4 sm:mb-8 inline-block floating-element"
+              style={{ animationDelay: '0.2s' }}
+            >
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#d4a574]/20 to-[#c9956d]/20 rounded-full blur-xl"></div>
                 <img
                   src="/grocery.png"
                   alt="Groceries"
-                  className="relative w-60 h-56 lg:w-60 lg:h-68 object-contain drop-shadow-2xl"
+                  className="relative w-40 h-32 sm:w-52 sm:h-48 lg:w-60 lg:h-56 object-contain drop-shadow-2xl"
                 />
               </div>
             </div>
 
-            {/* Welcome Text */}
+            {/* Welcome Text - RESPONSIVE SIZING */}
             <div className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
               <h2
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#2d2416] mb-4 leading-tight tracking-tight"
+                className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#2d2416] mb-3 sm:mb-4 leading-tight tracking-tight"
                 style={{ fontFamily: 'Playfair Display, serif' }}
               >
                 Welcome to Plated
               </h2>
-              <p className="text-xl sm:text-2xl text-[#6B5746] font-light leading-relaxed">
+              <p className="text-lg sm:text-xl lg:text-2xl text-[#6B5746] font-light leading-relaxed">
                 Well-planned meals, without overspending
               </p>
             </div>
 
             {/* Decorative divider */}
             <div
-              className="mt-10 flex items-center justify-center gap-3"
+              className="mt-6 sm:mt-10 flex items-center justify-center gap-3"
               style={{ animation: 'fadeInUp 0.8s ease-out 0.4s backwards' }}
             >
-              <div className="h-px w-16 bg-gradient-to-r from-transparent via-[#d4a574]/40 to-transparent"></div>
+              <div className="h-px w-12 sm:w-16 bg-gradient-to-r from-transparent via-[#d4a574]/40 to-transparent"></div>
               <div className="w-2 h-2 rounded-full bg-gradient-to-br from-[#618c45] to-[#c9956d]"></div>
-              <div className="h-px w-16 bg-gradient-to-r from-transparent via-[#618c45]/40 to-transparent"></div>
+              <div className="h-px w-12 sm:w-16 bg-gradient-to-r from-transparent via-[#618c45]/40 to-transparent"></div>
             </div>
           </div>
         </div>
 
         {/* Right Side - Form Card */}
-        <div className="lg:w-1/2 p-8 sm:p-10 lg:p-14 bg-white relative">
-          {/* Header */}
-          <div className="text-center mb-10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            <div className="inline-block mb-4">
-              <span className="px-5 py-2 bg-gradient-to-r from-[#618c45]/10 to-[#7ab05d]/10 text-[#2d4a28] rounded-full text-sm font-bold tracking-widest uppercase border border-[#618c45]/20">
+        <div className="lg:w-1/2 p-6 sm:p-8 lg:p-12 xl:p-14 bg-white relative">
+          {/* Header - RESPONSIVE SIZING */}
+          <div
+            className="text-center mb-6 sm:mb-10 animate-fade-up"
+            style={{ animationDelay: '0.2s' }}
+          >
+            <div className="inline-block mb-3 sm:mb-4">
+              <span className="px-4 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-[#618c45]/10 to-[#7ab05d]/10 text-[#2d4a28] rounded-full text-xs sm:text-sm font-bold tracking-widest uppercase border border-[#618c45]/20">
                 {isLogin ? 'Login' : 'Sign Up'}
               </span>
             </div>
 
             <h1
-              className="text-5xl sm:text-6xl font-bold text-[#2d2416] mb-3 tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#2d2416] mb-2 sm:mb-3 tracking-tight"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Plated
             </h1>
-            <p className="text-xl text-[#6B5746] font-light">
+            <p className="text-lg sm:text-xl text-[#6B5746] font-light">
               {isLogin ? 'Welcome back, friend' : 'Begin your journey'}
             </p>
           </div>
 
           {/* Error Messages */}
           {message && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-scale-in">
-              <p className="text-red-700 font-semibold">{message}</p>
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-scale-in">
+              <p className="text-sm sm:text-base text-red-700 font-semibold">{message}</p>
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Form - OPTIMIZED INPUT SIZES */}
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
-              <label className="block text-[#2d2416] font-semibold mb-3 text-base">
+              <label className="block text-[#2d2416] font-semibold mb-2 sm:mb-3 text-sm sm:text-base">
                 Email Address
               </label>
               <input
@@ -278,20 +284,22 @@ export default function AuthForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input-refined w-full px-5 py-4 border-2 border-[#d4a574]/30 rounded-2xl focus:outline-none focus:border-[#618c45] bg-white/80 backdrop-blur-sm text-[#2d2416] text-lg"
+                className="input-refined w-full px-4 sm:px-5 py-3 sm:py-4 border-2 border-[#d4a574]/30 rounded-xl sm:rounded-2xl focus:outline-none focus:border-[#618c45] bg-white/80 backdrop-blur-sm text-[#2d2416] text-base sm:text-lg"
                 placeholder="you@example.com"
               />
             </div>
 
             <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
-              <label className="block text-[#2d2416] font-semibold mb-3 text-base">Password</label>
+              <label className="block text-[#2d2416] font-semibold mb-2 sm:mb-3 text-sm sm:text-base">
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`input-refined w-full px-5 py-4 pr-20 border-2 rounded-2xl focus:outline-none bg-white/80 backdrop-blur-sm text-[#2d2416] text-lg ${
+                  className={`input-refined w-full px-4 sm:px-5 py-3 sm:py-4 pr-16 sm:pr-20 border-2 rounded-xl sm:rounded-2xl focus:outline-none bg-white/80 backdrop-blur-sm text-[#2d2416] text-base sm:text-lg ${
                     passwordError
                       ? 'border-red-400 focus:border-red-500'
                       : 'border-[#d4a574]/30 focus:border-[#618c45]'
@@ -302,16 +310,16 @@ export default function AuthForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-[#8B6F47] hover:text-[#6B5746] transition-colors font-semibold text-sm"
+                  className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 text-[#8B6F47] hover:text-[#6B5746] transition-colors font-semibold text-xs sm:text-sm"
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
 
               {passwordError && (
-                <div className="mt-3 flex items-start gap-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+                <div className="mt-2 sm:mt-3 flex items-start gap-2 text-red-600 bg-red-50 p-2.5 sm:p-3 rounded-lg border border-red-200">
                   <svg
-                    className="w-5 h-5 flex-shrink-0 mt-0.5"
+                    className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -321,14 +329,16 @@ export default function AuthForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <p className="text-sm font-semibold">Invalid credentials. Please try again.</p>
+                  <p className="text-xs sm:text-sm font-semibold">
+                    Invalid credentials. Please try again.
+                  </p>
                 </div>
               )}
 
               {accountError && (
-                <div className="mt-3 flex items-start gap-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+                <div className="mt-2 sm:mt-3 flex items-start gap-2 text-red-600 bg-red-50 p-2.5 sm:p-3 rounded-lg border border-red-200">
                   <svg
-                    className="w-5 h-5 flex-shrink-0 mt-0.5"
+                    className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -338,14 +348,16 @@ export default function AuthForm() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <p className="text-sm font-semibold">Account already exists. Please log in.</p>
+                  <p className="text-xs sm:text-sm font-semibold">
+                    Account already exists. Please log in.
+                  </p>
                 </div>
               )}
             </div>
 
             <button
               type="submit"
-              className="w-full paper-texture bg-[#618C45F2] text-white py-5 rounded-2xl font-bold text-lg tracking-wide shadow-[0_8px_24px_rgba(97,140,69,0.25)] hover:shadow-[0_12px_32px_rgba(97,140,69,0.35)] transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group animate-scale-in"
+              className="w-full paper-texture bg-[#618C45F2] text-white py-3.5 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg tracking-wide shadow-[0_8px_24px_rgba(97,140,69,0.25)] hover:shadow-[0_12px_32px_rgba(97,140,69,0.35)] transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group animate-scale-in"
               style={{ animationDelay: '0.5s' }}
             >
               <span className="relative z-10">{isLogin ? 'Log In' : 'Create Account'}</span>
@@ -353,9 +365,12 @@ export default function AuthForm() {
             </button>
           </form>
 
-          {/* Toggle Login/Signup */}
-          <div className="mt-8 text-center animate-fade-up" style={{ animationDelay: '0.6s' }}>
-            <p className="text-[#6B5746] text-lg">
+          {/* Toggle Login/Signup - RESPONSIVE TEXT */}
+          <div
+            className="mt-6 sm:mt-8 text-center animate-fade-up"
+            style={{ animationDelay: '0.6s' }}
+          >
+            <p className="text-[#6B5746] text-base sm:text-lg">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
               <button
                 type="button"
