@@ -276,7 +276,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-3xl sm:text-6xl lg:text-8xl font-bold mb-4 sm:mb-10 text-white leading-[1.1] tracking-tight"
+              className="text-4xl sm:text-7xl lg:text-8xl font-bold mb-4 sm:mb-10 text-white leading-[1.1] tracking-tight"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Meal planning and budget tracking,{' '}
