@@ -255,7 +255,7 @@ export default function Landing() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-[55vh] sm:h-[70vh] w-full max-w-[110rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
+          className="relative h-[65vh] sm:h-[75vh] w-full max-w-[110rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
         >
           <img src="/hero.jpg" alt="Hero" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-transparent"></div>
