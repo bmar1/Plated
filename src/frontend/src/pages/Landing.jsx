@@ -240,7 +240,7 @@ export default function Landing() {
         </motion.div>
       )}
 
-      {/* Hero Section - GREEN */}
+      {/* Hero Section - GREEN - FIXED FOR MOBILE */}
       <div className="relative flex items-center justify-center min-h-[92vh] px-4 overflow-hidden">
         <div
           className="organic-blob w-[600px] h-[600px] bg-[#618c45] top-[-200px] left-[-100px] rounded-full"
@@ -255,19 +255,19 @@ export default function Landing() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-[80vh] w-full max-w-[110rem] rounded-3xl overflow-hidden shadow-2xl"
+          className="relative h-[85vh] sm:h-[80vh] w-full max-w-[110rem] rounded-3xl overflow-hidden shadow-2xl"
         >
           <img src="/hero.jpg" alt="Hero" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-transparent"></div>
 
-          <div className="relative h-full flex flex-col items-start justify-center px-8 sm:px-16 lg:px-24 max-w-5xl">
+          <div className="relative h-full flex flex-col items-start justify-center px-6 sm:px-16 lg:px-24 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
-              <span className="inline-block bg-white/20 backdrop-blur-md text-white px-6 py-2 rounded-full text-sm font-bold tracking-widest border border-white/30">
+              <span className="inline-block bg-white/20 backdrop-blur-md text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-widest border border-white/30">
                 WELLNESS MADE SIMPLE
               </span>
             </motion.div>
@@ -276,7 +276,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-8 text-white leading-[1.1] tracking-tight"
+              className="text-4xl sm:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 text-white leading-[1.1] tracking-tight"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Meal planning and budget tracking,{' '}
@@ -287,7 +287,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="text-xl sm:text-2xl lg:text-3xl mb-12 max-w-3xl text-white/95 font-light leading-relaxed"
+              className="text-lg sm:text-2xl lg:text-3xl mb-8 sm:mb-12 max-w-3xl text-white/95 font-light leading-relaxed"
             >
               Plated is your meal planner and budget maintainer all in one — letting you focus on
               growing instead of tracking.
@@ -298,7 +298,7 @@ export default function Landing() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
               onClick={handleNavigation}
-              className="bg-white text-[#618c45] hover:bg-[#f5f9f3] px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105"
+              className="bg-white text-[#618c45] hover:bg-[#f5f9f3] px-8 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-lg sm:text-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105"
             >
               Build Plan →
             </motion.button>
@@ -397,7 +397,7 @@ export default function Landing() {
         </div>
       </motion.div>
 
-      {/* About Bento Grid Section - GREEN & BROWN MIX */}
+      {/* About Bento Grid Section - GREEN & BROWN MIX - FIXED FOR MOBILE */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -444,13 +444,13 @@ export default function Landing() {
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="grid grid-cols-12 gap-6 auto-rows-[280px]">
-            {/* Meal Planning Card - GREEN */}
+            {/* Meal Planning Card - GREEN - FIXED IMAGE SIZE ON MOBILE */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="col-span-12 lg:col-span-7 row-span-2 bg-gradient-to-br from-[#618c45] to-[#7ab05d] rounded-3xl p-10 shadow-2xl hover:shadow-[0_25px_70px_rgba(97,140,69,0.35)] transition-all duration-500 flex flex-col group relative overflow-hidden"
+              className="col-span-12 lg:col-span-7 row-span-2 bg-gradient-to-br from-[#618c45] to-[#7ab05d] rounded-3xl p-8 lg:p-10 shadow-2xl hover:shadow-[0_25px_70px_rgba(97,140,69,0.35)] transition-all duration-500 flex flex-col group relative overflow-hidden"
               whileHover={{ scale: 1.02, y: -8 }}
             >
               <div className="absolute inset-0 opacity-5">
@@ -464,22 +464,22 @@ export default function Landing() {
 
               <div className="relative z-10">
                 <h3
-                  className="text-4xl sm:text-5xl font-bold mb-5 text-white"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 lg:mb-5 text-white"
                   style={{ fontFamily: 'Playfair Display, serif' }}
                 >
                   Meal Planning
                 </h3>
-                <p className="text-white/95 text-lg sm:text-xl leading-relaxed max-w-lg">
+                <p className="text-white/95 text-base sm:text-lg lg:text-xl leading-relaxed max-w-lg">
                   Instantly create delicious, easy to cook meals. Create new plans weekly, that all
                   fit in any grocery budget.
                 </p>
               </div>
 
-              <div className="mt-6 flex-1 flex items-end justify-center relative z-10">
+              <div className="mt-4 lg:mt-6 flex-1 flex items-end justify-center relative z-10">
                 <img
                   src="/menu.png"
                   alt="Menu example"
-                  className="max-h-80 rounded-2xl drop-shadow-2xl group-hover:scale-105 transition-transform duration-500"
+                  className="w-full max-w-md lg:max-h-80 h-auto rounded-2xl drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 object-contain"
                 />
               </div>
             </motion.div>
@@ -575,7 +575,7 @@ export default function Landing() {
         </div>
       </motion.div>
 
-      {/* Process Section - GREEN */}
+      {/* Process Section - GREEN - COMPLETELY REDESIGNED FOR MOBILE */}
       <div id="process" className="py-24 bg-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-64 h-64 bg-[#618c45]/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#7ab05d]/5 rounded-full blur-3xl"></div>
@@ -604,8 +604,9 @@ export default function Landing() {
           </motion.h1>
         </div>
 
-        <div className="max-w-6xl mx-auto py-20 px-4 relative z-10">
-          <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#618c45]/20 via-[#618c45]/40 to-[#618c45]/20 hidden md:block" />
+        {/* Desktop Timeline View */}
+        <div className="hidden md:block max-w-6xl mx-auto py-20 px-4 relative z-10">
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#618c45]/20 via-[#618c45]/40 to-[#618c45]/20" />
 
           <div className="space-y-32">
             {steps.map((step, index) => {
@@ -618,13 +619,11 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
-                  className="relative flex flex-col md:flex-row items-center justify-between w-full"
+                  className="relative flex flex-row items-center justify-between w-full"
                 >
-                  <div
-                    className={`w-full md:w-[45%] flex ${isEven ? 'md:justify-end' : 'md:justify-start'}`}
-                  >
+                  <div className={`w-[45%] flex ${isEven ? 'justify-end' : 'justify-start'}`}>
                     {isEven ? (
-                      <div className="glass-card p-8 rounded-3xl max-w-md text-center md:text-right">
+                      <div className="glass-card p-8 rounded-3xl max-w-md text-right">
                         <h2
                           className="text-3xl font-bold mb-4 text-[#2d4a28]"
                           style={{ fontFamily: 'Playfair Display, serif' }}
@@ -634,7 +633,7 @@ export default function Landing() {
                         <p className="text-lg text-[#5A7A4D] leading-relaxed">{step.description}</p>
                       </div>
                     ) : (
-                      <div className="hidden md:block">{step.cardContent}</div>
+                      <div>{step.cardContent}</div>
                     )}
                   </div>
 
@@ -647,13 +646,11 @@ export default function Landing() {
                     </span>
                   </div>
 
-                  <div
-                    className={`w-full md:w-[45%] flex ${isEven ? 'md:justify-start' : 'md:justify-end'} mt-8 md:mt-0`}
-                  >
+                  <div className={`w-[45%] flex ${isEven ? 'justify-start' : 'justify-end'}`}>
                     {isEven ? (
-                      <div className="hidden md:block">{step.cardContent}</div>
+                      <div>{step.cardContent}</div>
                     ) : (
-                      <div className="glass-card p-8 rounded-3xl max-w-md text-center md:text-left">
+                      <div className="glass-card p-8 rounded-3xl max-w-md text-left">
                         <h2
                           className="text-3xl font-bold mb-4 text-[#2d4a28]"
                           style={{ fontFamily: 'Playfair Display, serif' }}
@@ -667,6 +664,48 @@ export default function Landing() {
                 </motion.div>
               );
             })}
+          </div>
+        </div>
+
+        {/* Mobile Vertical Timeline View */}
+        <div className="md:hidden max-w-2xl mx-auto px-4 relative z-10">
+          <div className="space-y-12">
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.id}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.15 }}
+                className="relative pl-16"
+              >
+                {/* Timeline line */}
+                {index !== steps.length - 1 && (
+                  <div className="absolute left-7 top-16 bottom-0 w-0.5 bg-gradient-to-b from-[#618c45]/40 to-[#618c45]/20"></div>
+                )}
+
+                {/* Step number circle */}
+                <div className="absolute left-0 top-0 flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#618c45] to-[#7ab05d] rounded-2xl flex items-center justify-center shadow-xl border-4 border-white rotate-45">
+                    <div className="w-5 h-5 bg-white/90 rounded-sm -rotate-45"></div>
+                  </div>
+                  <span className="text-xs font-bold text-[#618c45] bg-white px-3 py-1 rounded-full shadow-md tracking-wider">
+                    {step.id}
+                  </span>
+                </div>
+
+                {/* Content card */}
+                <div className="glass-card p-6 rounded-2xl">
+                  <h2
+                    className="text-2xl font-bold mb-3 text-[#2d4a28]"
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                  >
+                    {step.title}
+                  </h2>
+                  <p className="text-base text-[#5A7A4D] leading-relaxed">{step.description}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
