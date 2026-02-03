@@ -475,11 +475,11 @@ export default function Landing() {
                 </p>
               </div>
 
-              <div className="mt-4 lg:mt-6 flex-1 flex items-end justify-center relative z-10">
+              <div className="mt-4 lg:mt-6 pb-6 flex-1 flex items-center justify-center relative z-10">
                 <img
                   src="/menu.png"
                   alt="Menu example"
-                  className="w-full max-w-md lg:max-h-80 h-auto rounded-2xl drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 object-contain"
+                  className="w-full max-w-xl h-auto rounded-2xl drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 object-contain"
                 />
               </div>
             </motion.div>
