@@ -74,6 +74,7 @@ export default function Dashboard() {
     const onboardingStatus = localStorage.getItem('onboarding');
     if (onboardingStatus === 'true') {
       setShowOnboarding(true);
+      setIsLoading(false);
       setIsInitialLoad(false);
     } else if (isInitialLoad) {
       loadDashboardData();
