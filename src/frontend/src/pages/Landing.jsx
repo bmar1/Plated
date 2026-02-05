@@ -250,7 +250,6 @@ export default function Landing() {
           className="organic-blob w-[500px] h-[500px] bg-[#7ab05d] bottom-[-150px] right-[-100px] rounded-full"
           style={{ animationDelay: '3s' }}
         ></div>
-
         <motion.div
   initial={{ opacity: 0, y: 60 }}
   animate={{ opacity: 1, y: 0 }}
@@ -307,7 +306,6 @@ export default function Landing() {
           </div>
         </motion.div>
       </div>
-
       {/* Features Section - BROWN */}
       <motion.div
         id="features"
