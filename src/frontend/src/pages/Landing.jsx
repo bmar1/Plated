@@ -252,47 +252,49 @@ export default function Landing() {
         ></div>
 
         <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-[70vh] sm:h-[75vh] w-full max-w-[110rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
-        >
-          <img src="/hero.jpg" alt="Hero" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-transparent"></div>
-
-          <div className="relative h-full flex flex-col items-start justify-center px-5 sm:px-16 lg:px-24 max-w-5xl py-6 sm:py-0">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-5 sm:mb-8"
-            >
-              <span className="inline-block bg-white/20 backdrop-blur-md text-white px-3 sm:px-6 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-widest border border-white/30">
-                WELLNESS MADE SIMPLE
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl sm:text-7xl lg:text-8xl font-bold mb-4 sm:mb-10 text-white leading-[1.1] tracking-tight"
-              style={{ fontFamily: 'Playfair Display, serif' }}
-            >
-              Meal planning and budget tracking,{' '}
-              <span className="italic text-[#c8e6b8]">made easy</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="text-base sm:text-2xl lg:text-3xl mb-6 sm:mb-14 max-w-3xl text-white/95 font-light leading-relaxed"
-            >
-              Plated is your meal planner and budget maintainer all in one — letting you focus on
-              growing instead of tracking.
-            </motion.p>
-
+  initial={{ opacity: 0, y: 60 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+  className="relative h-[70vh] sm:h-[65vh] md:h-[70vh] lg:h-[75vh] w-full max-w-[110rem] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
+>
+  <img 
+    src="/hero.jpg" 
+    alt="Hero" 
+    className="absolute inset-0 w-full h-full object-cover object-center md:object-[center_40%]" 
+  />
+  <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-transparent"></div>
+  <div className="relative h-full flex flex-col items-start justify-center px-5 sm:px-12 md:px-16 lg:px-24 max-w-5xl py-6 sm:py-0">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="mb-4 sm:mb-6 md:mb-8"
+    >
+      <span className="inline-block bg-white/20 backdrop-blur-md text-white px-3 sm:px-5 md:px-6 py-1 sm:py-1.5 md:py-2 rounded-full text-xs sm:text-sm font-bold tracking-widest border border-white/30">
+        WELLNESS MADE SIMPLE
+      </span>
+    </motion.div>
+    <motion.h1
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 md:mb-8 lg:mb-10 text-white leading-[1.1] tracking-tight"
+      style={{ fontFamily: 'Playfair Display, serif' }}
+    >
+      Meal planning and budget tracking,{' '}
+      <span className="italic text-[#c8e6b8]">made easy</span>
+    </motion.h1>
+    <motion.p
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-10 md:mb-12 lg:mb-14 max-w-3xl text-white/95 font-light leading-relaxed"
+    >
+      Plated is your meal planner and budget maintainer all in one — letting you focus on
+      growing instead of tracking.
+    </motion.p>
+  </div>
+</motion.div>
             <motion.button
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
