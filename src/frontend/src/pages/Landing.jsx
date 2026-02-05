@@ -287,7 +287,7 @@ export default function Landing() {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-10 md:mb-12 lg:mb-14 max-w-3xl text-white/95 font-light leading-relaxed"
+      className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-6 sm:mb-10 md:mb-4 lg:mb-14 max-w-3xl text-white/95 font-light leading-relaxed"
     >
       Plated is your meal planner and budget maintainer all in one — letting you focus on
       growing instead of tracking.
@@ -304,7 +304,6 @@ export default function Landing() {
   </div>
 </motion.div>
       </div>
-      
       {/* Features Section - BROWN */}
       <motion.div
         id="features"
