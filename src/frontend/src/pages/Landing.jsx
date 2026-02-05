@@ -292,20 +292,19 @@ export default function Landing() {
       Plated is your meal planner and budget maintainer all in one — letting you focus on
       growing instead of tracking.
     </motion.p>
+    <motion.button
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      onClick={handleNavigation}
+      className="bg-white text-[#618c45] hover:bg-[#f5f9f3] px-6 mt-4 sm:px-12 py-3.5 sm:py-5 rounded-full font-bold text-base sm:text-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105"
+    >
+      Build Plan →
+    </motion.button>
   </div>
 </motion.div>
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              onClick={handleNavigation}
-              className="bg-white text-[#618c45] hover:bg-[#f5f9f3] px-6 mt-4 sm:px-12 py-3.5 sm:py-5 rounded-full font-bold text-base sm:text-xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105"
-            >
-              Build Plan →
-            </motion.button>
-          </div>
-        </motion.div>
       </div>
+      
       {/* Features Section - BROWN */}
       <motion.div
         id="features"
