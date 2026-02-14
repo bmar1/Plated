@@ -6,7 +6,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-#Clean pacjage and skip tests (tests are already ran in CI)
+#Clean package and skip tests (tests are already ran in CI)
 RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
