@@ -18,7 +18,11 @@ function App() {
   useSmoothScroll(scrollableRef);
 
   return (
-    <div ref={scrollableRef} style={{ height: '100vh', overflowY: 'auto' }}>
+    <div
+      id="app-scroll"
+      ref={scrollableRef}
+      style={{ height: '100vh', overflowY: 'auto' }}
+    >
       {/* define routes under router, wrapping with protected routes which fall-back if invalid token/status */}
       <Router>
         <Routes>

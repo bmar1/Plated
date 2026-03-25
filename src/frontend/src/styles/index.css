@@ -1,6 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Crimson+Text:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html {
+@layer base {
+  :root {
+    --background: 44 33% 97%;
+    --foreground: 28 22% 15%;
+    --primary: 99 32% 42%;
+    --primary-foreground: 44 33% 97%;
+    --secondary: 44 22% 93%;
+    --border: 44 18% 87%;
+    --hero-heading: 28 28% 12%;
+    --hero-sub: 28 14% 44%;
+    --card: 0 0% 100%;
+    --muted: 44 22% 93%;
+    --muted-foreground: 30 10% 54%;
+    --accent: 100 30% 88%;
+    --accent-foreground: 99 32% 30%;
+    --radius: 1rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    font-family: 'Crimson Text', 'Georgia', serif;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Georgia', serif;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .warm-pane {
+    background: rgba(255, 253, 249, 0.76);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(97, 140, 69, 0.12);
+    box-shadow:
+      0 2px 32px rgba(44, 73, 39, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .warm-pane::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.90) 0%,
+      rgba(255, 255, 255, 0.40) 25%,
+      rgba(97, 140, 69, 0.08) 50%,
+      rgba(255, 255, 255, 0.40) 75%,
+      rgba(255, 255, 255, 0.90) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #618c45 0%, #7ab05d 50%, #5A7A4D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }

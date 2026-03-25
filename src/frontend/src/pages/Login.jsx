@@ -1,40 +1,56 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Eye, EyeOff, Salad, CalendarDays, Wallet, ShoppingCart } from 'lucide-react';
+
+function FadeIn({ children, delay = 0, className = '' }) {
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay, ease: 'easeOut' }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+const PERKS = [
+  { icon: CalendarDays, label: 'Plan a full week in minutes' },
+  { icon: Wallet,       label: 'See grocery cost as you plan' },
+  { icon: ShoppingCart, label: 'One-click grocery list' },
+];
 
 export default function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin]           = useState(true);
+  const location                        = useLocation();
+  const navigate                        = useNavigate();
+  const [email, setEmail]               = useState('');
+  const [password, setPassword]         = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [accountError, setAccountError] = useState(false);
+  const [accountError, setAccountError]   = useState(false);
 
   const message = location.state?.message;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const endpoint = isLogin ? 'login' : 'signup';
-    const url = `/api/auth/${endpoint}`;
-    let res;
-    res = await fetch(url, {
+    const res = await fetch(`/api/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
 
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem('token', data.token);
       localStorage.setItem('email', email);
-
-      if (isLogin) {
-        localStorage.removeItem('onboarding');
-      } else {
-        localStorage.setItem('onboarding', true);
-      }
+      if (isLogin) localStorage.removeItem('onboarding');
+      else localStorage.setItem('onboarding', true);
       navigate('/dashboard');
       setPasswordError(false);
     } else if (isLogin && res.status === 403) {
@@ -47,340 +63,239 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#fdfcf9] via-[#f9f6f1] to-[#f5f0e8] p-4 sm:p-6">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Crimson+Text:wght@400;600;700&display=swap');
-        
-        * {
-          font-family: 'Crimson Text', serif;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Playfair Display', serif;
-        }
+    <div className="min-h-screen flex bg-background text-foreground overflow-hidden">
 
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+      {/* ── LEFT PANEL — brand + visual ──────────────────────── */}
+      <div className="hidden lg:flex lg:w-[46%] xl:w-[42%] relative flex-col justify-between overflow-hidden bg-gradient-to-b from-[#F2EDE0] via-[#EDE5D0] to-[#E5DAC5] p-10 xl:p-14">
 
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes floatGentle {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-15px);
-          }
-        }
-
-        .animate-fade-up {
-          animation: fadeInUp 0.8s ease-out backwards;
-        }
-
-        .animate-scale-in {
-          animation: scaleIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-        }
-
-        .paper-texture {
-          position: relative;
-        }
-
-        .paper-texture::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
-          pointer-events: none;
-          border-radius: inherit;
-          mix-blend-mode: overlay;
-        }
-
-        .elegant-shadow {
-          box-shadow: 
-            0 4px 6px rgba(45, 36, 22, 0.03),
-            0 10px 20px rgba(45, 36, 22, 0.08),
-            0 0 0 1px rgba(45, 36, 22, 0.05);
-        }
-
-        .elegant-shadow-hover {
-          transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .elegant-shadow-hover:hover {
-          box-shadow: 
-            0 8px 12px rgba(45, 36, 22, 0.05),
-            0 20px 40px rgba(45, 36, 22, 0.12),
-            0 0 0 1px rgba(45, 36, 22, 0.08);
-          transform: translateY(-4px);
-        }
-
-        .input-refined {
-          transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .input-refined:focus {
-          transform: translateY(-2px);
-          box-shadow: 
-            0 4px 12px rgba(97, 140, 69, 0.12),
-            0 0 0 3px rgba(122, 176, 93, 0.08);
-        }
-
-        .floating-element {
-          animation: floatGentle 6s ease-in-out infinite;
-        }
-      `}</style>
-
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        {/* Soft gradients - Brown & Green mix */}
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-gradient-to-br from-[#d4a574]/10 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 -right-20 w-96 h-96 bg-gradient-to-tl from-[#c9956d]/10 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#8B6F47]/5 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-40 right-40 w-[500px] h-[500px] bg-gradient-to-bl from-[#7ab05d]/8 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-32 left-32 w-[450px] h-[450px] bg-gradient-to-tr from-[#618c45]/6 to-transparent rounded-full blur-3xl"></div>
-
-        {/* Decorative circles - Brown & Green */}
-        <div className="absolute top-32 right-32 w-2 h-2 rounded-full bg-[#d4a574]/30"></div>
-        <div className="absolute bottom-48 left-48 w-3 h-3 rounded-full bg-[#c9956d]/20"></div>
-        <div className="absolute top-2/3 right-1/4 w-1.5 h-1.5 rounded-full bg-[#8B6F47]/25"></div>
-        <div className="absolute top-1/4 left-1/3 w-2 h-2 rounded-full bg-[#618c45]/25"></div>
-        <div className="absolute bottom-1/3 right-1/3 w-2.5 h-2.5 rounded-full bg-[#7ab05d]/20"></div>
-
-        {/* Subtle leaf/organic shapes - hide on small mobile */}
-        <div className="hidden sm:block absolute top-24 left-24 w-32 h-32 opacity-5">
-          <svg viewBox="0 0 100 100" className="w-full h-full text-[#618c45]">
-            <path
-              fill="currentColor"
-              d="M50,10 Q80,30 85,60 Q80,85 50,95 Q40,80 35,60 Q30,40 50,10z"
-            />
-          </svg>
-        </div>
-        <div className="hidden sm:block absolute bottom-32 right-24 w-40 h-40 opacity-5 rotate-45">
-          <svg viewBox="0 0 100 100" className="w-full h-full text-[#c9956d]">
-            <path
-              fill="currentColor"
-              d="M50,10 Q80,30 85,60 Q80,85 50,95 Q40,80 35,60 Q30,40 50,10z"
-            />
-          </svg>
+        {/* Organic blobs */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-primary/12 blur-3xl" />
+          <div className="absolute right-0 bottom-0 h-[28rem] w-[28rem] rounded-full bg-[#DDE6D5] blur-3xl" />
+          <div className="absolute left-1/3 top-1/2 h-64 w-64 rounded-full bg-[#F1E7D2] blur-3xl" />
         </div>
 
-        {/* Diagonal lines pattern */}
-        <div className="absolute inset-0 opacity-[0.015]">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(45deg, #618c45 0px, #618c45 1px, transparent 1px, transparent 40px)'
-            }}
-          ></div>
+        {/* Logo */}
+        <FadeIn className="relative z-10">
+          <button
+            onClick={() => navigate('/landing')}
+            className="flex items-center gap-3 group"
+          >
+            <img src="/favicon-v1.png" alt="Plated" className="h-12 w-12 object-contain" style={{ filter: 'hue-rotate(55deg) saturate(3) brightness(0.65)' }} />
+            <span className="font-playfair text-2xl font-bold text-hero-heading">Plated</span>
+          </button>
+        </FadeIn>
+
+        {/* Centre content — hero image with text layered inside */}
+        <div className="relative z-10 flex flex-col items-start">
+          <FadeIn delay={0.1} className="w-full">
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative overflow-hidden rounded-3xl shadow-2xl"
+              style={{
+                boxShadow: '0 24px 64px rgba(44,73,39,0.18), 0 4px 16px rgba(44,73,39,0.08)',
+                border: '2px solid rgba(255,255,255,0.75)',
+              }}
+            >
+              <img
+                src="/hero.jpg"
+                alt="Fresh ingredients"
+                className="h-[26rem] w-full object-cover xl:h-[30rem]"
+                style={{ objectPosition: 'center 20%' }}
+              />
+
+              {/* Dark gradient on lower half for text legibility */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(to bottom, transparent 30%, rgba(20,30,15,0.55) 60%, rgba(20,30,15,0.82) 100%)',
+                }}
+              />
+
+              {/* Text + perks overlaid on the image */}
+              <div className="absolute bottom-0 left-0 right-0 p-7 xl:p-8">
+                <h2 className="font-playfair text-3xl xl:text-4xl font-bold leading-[1.1] tracking-tight text-white">
+                  Eat well.
+                  <br />
+                  <span style={{ color: '#a8d48a' }}>Spend less.</span>
+                </h2>
+                <p className="mt-3 max-w-xs text-base leading-relaxed text-white/75">
+                  Plan real meals, track your grocery budget, and skip the daily "what's for dinner?" spiral.
+                </p>
+                <ul className="mt-5 space-y-2.5">
+                  {PERKS.map(({ icon: Icon, label }) => (
+                    <li key={label} className="flex items-center gap-3">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-white" style={{ background: 'rgba(97,140,69,0.55)' }}>
+                        <Icon size={13} />
+                      </div>
+                      <span className="text-sm font-medium text-white/90">{label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </FadeIn>
         </div>
+
+        {/* Bottom tagline */}
+        <FadeIn delay={0.4} className="relative z-10">
+          <p className="text-sm text-hero-sub/70">© 2026 Plated — Meal planning made simple.</p>
+        </FadeIn>
       </div>
 
-      {/* Main Container */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-stretch max-w-5xl w-full elegant-shadow-hover hover:border-b-green-700 rounded-[24px] sm:rounded-[32px] overflow-hidden bg-white/80 backdrop-blur-sm">
-        {/* Left Side - Welcome Card */}
-        <div className="paper-texture bg-gradient-to-br from-[#f7f2e1] to-[#ede4c8] lg:w-1/2 p-6 sm:p-10 lg:p-14 flex flex-col items-center justify-center text-center relative overflow-hidden">
-          {/* Decorative corner accent */}
-          <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/20 rounded-full blur-2xl"></div>
-          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#d4a574]/10 rounded-full blur-2xl"></div>
+      {/* ── RIGHT PANEL — auth form ───────────────────────────── */}
+      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-8 relative overflow-hidden">
 
-          <div className="relative z-10">
-            {/* Image - OPTIMIZED FOR MOBILE */}
-            <div
-              className="mb-4 sm:mb-8 inline-block floating-element"
-              style={{ animationDelay: '0.2s' }}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#d4a574]/20 to-[#c9956d]/20 rounded-full blur-xl"></div>
-                <img
-                  src="/grocery.png"
-                  alt="Groceries"
-                  className="relative w-40 h-32 sm:w-52 sm:h-48 lg:w-60 lg:h-56 object-contain drop-shadow-2xl"
-                />
-              </div>
-            </div>
-
-            {/* Welcome Text - RESPONSIVE SIZING */}
-            <div className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
-              <h2
-                className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#2d2416] mb-3 sm:mb-4 leading-tight tracking-tight"
-                style={{ fontFamily: 'Playfair Display, serif' }}
-              >
-                Welcome to Plated
-              </h2>
-              <p className="text-lg sm:text-xl lg:text-2xl text-[#6B5746] font-light leading-relaxed">
-                Well-planned meals, without overspending
-              </p>
-            </div>
-
-            {/* Decorative divider */}
-            <div
-              className="mt-6 sm:mt-10 flex items-center justify-center gap-3"
-              style={{ animation: 'fadeInUp 0.8s ease-out 0.4s backwards' }}
-            >
-              <div className="h-px w-12 sm:w-16 bg-gradient-to-r from-transparent via-[#d4a574]/40 to-transparent"></div>
-              <div className="w-2 h-2 rounded-full bg-gradient-to-br from-[#618c45] to-[#c9956d]"></div>
-              <div className="h-px w-12 sm:w-16 bg-gradient-to-r from-transparent via-[#618c45]/40 to-transparent"></div>
-            </div>
-          </div>
+        {/* Subtle background blobs on mobile / right side */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute right-0 top-0 h-[28rem] w-[28rem] rounded-full bg-[#DDE6D5]/60 blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-primary/6 blur-3xl" />
         </div>
 
-        {/* Right Side - Form Card */}
-        <div className="lg:w-1/2 p-6 sm:p-8 lg:p-12 xl:p-14 bg-white relative">
-          {/* Header - RESPONSIVE SIZING */}
-          <div
-            className="text-center mb-6 sm:mb-10 animate-fade-up"
-            style={{ animationDelay: '0.2s' }}
-          >
-            <div className="inline-block mb-3 sm:mb-4">
-              <span className="px-4 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-[#618c45]/10 to-[#7ab05d]/10 text-[#2d4a28] rounded-full text-xs sm:text-sm font-bold tracking-widest uppercase border border-[#618c45]/20">
-                {isLogin ? 'Login' : 'Sign Up'}
-              </span>
-            </div>
+        <div className="relative z-10 w-full max-w-lg">
 
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#2d2416] mb-2 sm:mb-3 tracking-tight"
-              style={{ fontFamily: 'Playfair Display, serif' }}
+          {/* Mobile logo (hidden on lg+) */}
+          <FadeIn className="mb-8 flex items-center gap-3 lg:hidden">
+            <img src="/favicon-v1.png" alt="Plated" className="h-12 w-12 object-contain" style={{ filter: 'hue-rotate(55deg) saturate(3) brightness(0.65)' }} />
+            <span className="font-playfair text-2xl font-bold text-hero-heading">Plated</span>
+          </FadeIn>
+
+          {/* Card */}
+          <FadeIn delay={0.08}>
+            <div
+              className="rounded-[2rem] bg-white/80 p-10 sm:p-12 shadow-xl shadow-primary/[0.06]"
+              style={{
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(97,140,69,0.12)',
+                boxShadow: '0 4px 32px rgba(44,73,39,0.08), 0 1px 0 rgba(255,255,255,0.95) inset',
+              }}
             >
-              Plated
-            </h1>
-            <p className="text-lg sm:text-xl text-[#6B5746] font-light">
-              {isLogin ? 'Welcome back, friend' : 'Begin your journey'}
-            </p>
-          </div>
-
-          {/* Error Messages */}
-          {message && (
-            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-scale-in">
-              <p className="text-sm sm:text-base text-red-700 font-semibold">{message}</p>
-            </div>
-          )}
-
-          {/* Form - OPTIMIZED INPUT SIZES */}
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
-              <label className="block text-[#2d2416] font-semibold mb-2 sm:mb-3 text-sm sm:text-base">
-                Email Address
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-refined w-full px-4 sm:px-5 py-3 sm:py-4 border-2 border-[#d4a574]/30 rounded-xl sm:rounded-2xl focus:outline-none focus:border-[#618c45] bg-white/80 backdrop-blur-sm text-[#2d2416] text-base sm:text-lg"
-                placeholder="you@example.com"
-              />
-            </div>
-
-            <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
-              <label className="block text-[#2d2416] font-semibold mb-2 sm:mb-3 text-sm sm:text-base">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`input-refined w-full px-4 sm:px-5 py-3 sm:py-4 pr-16 sm:pr-20 border-2 rounded-xl sm:rounded-2xl focus:outline-none bg-white/80 backdrop-blur-sm text-[#2d2416] text-base sm:text-lg ${
-                    passwordError
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-[#d4a574]/30 focus:border-[#618c45]'
-                  }`}
-                  placeholder="••••••••"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 text-[#8B6F47] hover:text-[#6B5746] transition-colors font-semibold text-xs sm:text-sm"
-                >
-                  {showPassword ? 'Hide' : 'Show'}
-                </button>
+              {/* Header */}
+              <div className="mb-8">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/6 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                  <Salad size={12} />
+                  {isLogin ? 'Welcome back' : 'Get started free'}
+                </div>
+                <h1 className="mt-4 font-playfair text-4xl font-bold tracking-tight text-hero-heading sm:text-5xl">
+                  {isLogin ? 'Log in' : 'Create account'}
+                </h1>
+                <p className="mt-2 text-lg text-hero-sub">
+                  {isLogin
+                    ? "Good to see you again — let's get planning."
+                    : "Takes 10 seconds, no credit card needed."}
+                </p>
               </div>
 
-              {passwordError && (
-                <div className="mt-2 sm:mt-3 flex items-start gap-2 text-red-600 bg-red-50 p-2.5 sm:p-3 rounded-lg border border-red-200">
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="text-xs sm:text-sm font-semibold">
-                    Invalid credentials. Please try again.
-                  </p>
+              {/* Alerts */}
+              {message && (
+                <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+                  {message}
                 </div>
               )}
 
-              {accountError && (
-                <div className="mt-2 sm:mt-3 flex items-start gap-2 text-red-600 bg-red-50 p-2.5 sm:p-3 rounded-lg border border-red-200">
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="text-xs sm:text-sm font-semibold">
-                    Account already exists. Please log in.
-                  </p>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+
+                {/* Email */}
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-hero-heading">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full rounded-2xl border-2 border-border/60 bg-white/70 px-5 py-3.5 text-base text-foreground placeholder-muted-foreground outline-none backdrop-blur-sm transition-all duration-200 focus:border-primary focus:shadow-[0_0_0_4px_rgba(97,140,69,0.08)]"
+                  />
                 </div>
-              )}
+
+                {/* Password */}
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-hero-heading">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`w-full rounded-2xl border-2 bg-white/70 px-5 py-3.5 pr-14 text-base text-foreground placeholder-muted-foreground outline-none backdrop-blur-sm transition-all duration-200 focus:shadow-[0_0_0_4px_rgba(97,140,69,0.08)] ${
+                        passwordError
+                          ? 'border-red-400 focus:border-red-400'
+                          : 'border-border/60 focus:border-primary'
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+
+                  {/* Error states */}
+                  {passwordError && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700"
+                    >
+                      Wrong email or password. Try again.
+                    </motion.div>
+                  )}
+                  {accountError && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700"
+                    >
+                      That email's already taken. Try logging in instead.
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  {isLogin ? 'Log in' : 'Create my account'}
+                  <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                </button>
+              </form>
+
+              {/* Toggle */}
+              <p className="mt-7 text-center text-base text-hero-sub">
+                {isLogin ? "Don't have an account? " : 'Already have an account? '}
+                <button
+                  type="button"
+                  onClick={() => { setIsLogin(!isLogin); setPasswordError(false); setAccountError(false); }}
+                  className="font-semibold text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline"
+                >
+                  {isLogin ? 'Sign up free' : 'Log in'}
+                </button>
+              </p>
             </div>
+          </FadeIn>
 
-            <button
-              type="submit"
-              className="w-full paper-texture bg-[#618C45F2] text-white py-3.5 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg tracking-wide shadow-[0_8px_24px_rgba(97,140,69,0.25)] hover:shadow-[0_12px_32px_rgba(97,140,69,0.35)] transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group animate-scale-in"
-              style={{ animationDelay: '0.5s' }}
-            >
-              <span className="relative z-10">{isLogin ? 'Log In' : 'Create Account'}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#7ab05d] to-[#618c45] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </button>
-          </form>
-
-          {/* Toggle Login/Signup - RESPONSIVE TEXT */}
-          <div
-            className="mt-6 sm:mt-8 text-center animate-fade-up"
-            style={{ animationDelay: '0.6s' }}
-          >
-            <p className="text-[#6B5746] text-base sm:text-lg">
-              {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          {/* Back to landing */}
+          <FadeIn delay={0.18}>
+            <p className="mt-6 text-center text-sm text-hero-sub">
               <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-[#618c45] hover:text-[#7ab05d] font-bold underline-offset-4 hover:underline transition-colors"
+                onClick={() => navigate('/landing')}
+                className="text-primary/70 transition-colors hover:text-primary"
               >
-                {isLogin ? 'Sign Up' : 'Log In'}
+                ← Back to landing page
               </button>
             </p>
-          </div>
+          </FadeIn>
         </div>
       </div>
     </div>
