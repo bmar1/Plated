@@ -39,6 +39,7 @@ export default function AuthForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'signup';
+    console.log('API URL:', process.env.REACT_APP_API_URL);
     const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
