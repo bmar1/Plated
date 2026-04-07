@@ -38,7 +38,7 @@ export default function Settings({ setShowSettings, setShowPreferences }) {
 
   const handleNewMealPlan = async () => {
     try {
-      const res = await fetch('process.env.API_URL/onboarding', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}\onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

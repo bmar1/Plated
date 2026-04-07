@@ -30,7 +30,7 @@ export default function AllMeals() {
 
   const loadMeals = async () => {
     try {
-      const response = await fetch(`process.env.API_URL/meals`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/meals`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

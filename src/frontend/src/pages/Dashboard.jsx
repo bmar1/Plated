@@ -218,7 +218,7 @@ export default function Dashboard() {
     }
     try {
       console.log('Fetching from API in the background...');
-      const response = await fetch(`process.env.API_URL/load`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/load`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

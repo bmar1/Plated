@@ -39,7 +39,7 @@ export default function AuthForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'signup';
-    const res = await fetch(`process.env.API_URL/auth/${endpoint}`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
