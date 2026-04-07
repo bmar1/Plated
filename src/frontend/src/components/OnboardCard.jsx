@@ -32,7 +32,7 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
     setShowLoading(true);
 
     try {
-      const res = await fetch('/api/onboarding', {
+      const res = await fetch('process.env.API_URL/onboarding', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

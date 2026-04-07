@@ -20,29 +20,29 @@ function FadeIn({ children, delay = 0, className = '' }) {
 
 const PERKS = [
   { icon: CalendarDays, label: 'Plan a full week in minutes' },
-  { icon: Wallet,       label: 'See grocery cost as you plan' },
-  { icon: ShoppingCart, label: 'One-click grocery list' },
+  { icon: Wallet, label: 'See grocery cost as you plan' },
+  { icon: ShoppingCart, label: 'One-click grocery list' }
 ];
 
 export default function AuthForm() {
-  const [isLogin, setIsLogin]           = useState(true);
-  const location                        = useLocation();
-  const navigate                        = useNavigate();
-  const [email, setEmail]               = useState('');
-  const [password, setPassword]         = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [accountError, setAccountError]   = useState(false);
+  const [accountError, setAccountError] = useState(false);
 
   const message = location.state?.message;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'signup';
-    const res = await fetch(`/api/auth/${endpoint}`, {
+    const res = await fetch(`process.env.API_URL/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password })
     });
 
     if (res.ok) {
@@ -64,10 +64,8 @@ export default function AuthForm() {
 
   return (
     <div className="min-h-screen flex bg-background text-foreground overflow-hidden">
-
       {/* ── LEFT PANEL — brand + visual ──────────────────────── */}
       <div className="hidden lg:flex lg:w-[46%] xl:w-[42%] relative flex-col justify-between overflow-hidden bg-gradient-to-b from-[#F2EDE0] via-[#EDE5D0] to-[#E5DAC5] p-10 xl:p-14">
-
         {/* Organic blobs */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-primary/12 blur-3xl" />
@@ -77,11 +75,13 @@ export default function AuthForm() {
 
         {/* Logo */}
         <FadeIn className="relative z-10">
-          <button
-            onClick={() => navigate('/landing')}
-            className="flex items-center gap-3 group"
-          >
-            <img src="/favicon-v1.png" alt="Plated" className="h-12 w-12 object-contain" style={{ filter: 'hue-rotate(55deg) saturate(3) brightness(0.65)' }} />
+          <button onClick={() => navigate('/landing')} className="flex items-center gap-3 group">
+            <img
+              src="/favicon-v1.png"
+              alt="Plated"
+              className="h-12 w-12 object-contain"
+              style={{ filter: 'hue-rotate(55deg) saturate(3) brightness(0.65)' }}
+            />
             <span className="font-playfair text-2xl font-bold text-hero-heading">Plated</span>
           </button>
         </FadeIn>
@@ -95,7 +95,7 @@ export default function AuthForm() {
               className="relative overflow-hidden rounded-3xl shadow-2xl"
               style={{
                 boxShadow: '0 24px 64px rgba(44,73,39,0.18), 0 4px 16px rgba(44,73,39,0.08)',
-                border: '2px solid rgba(255,255,255,0.75)',
+                border: '2px solid rgba(255,255,255,0.75)'
               }}
             >
               <img
@@ -109,7 +109,8 @@ export default function AuthForm() {
               <div
                 className="absolute inset-0"
                 style={{
-                  background: 'linear-gradient(to bottom, transparent 30%, rgba(20,30,15,0.55) 60%, rgba(20,30,15,0.82) 100%)',
+                  background:
+                    'linear-gradient(to bottom, transparent 30%, rgba(20,30,15,0.55) 60%, rgba(20,30,15,0.82) 100%)'
                 }}
               />
 
@@ -121,12 +122,16 @@ export default function AuthForm() {
                   <span style={{ color: '#a8d48a' }}>Spend less.</span>
                 </h2>
                 <p className="mt-3 max-w-xs text-base leading-relaxed text-white/75">
-                  Plan real meals, track your grocery budget, and skip the daily "what's for dinner?" spiral.
+                  Plan real meals, track your grocery budget, and skip the daily "what's for
+                  dinner?" spiral.
                 </p>
                 <ul className="mt-5 space-y-2.5">
                   {PERKS.map(({ icon: Icon, label }) => (
                     <li key={label} className="flex items-center gap-3">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-white" style={{ background: 'rgba(97,140,69,0.55)' }}>
+                      <div
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-white"
+                        style={{ background: 'rgba(97,140,69,0.55)' }}
+                      >
                         <Icon size={13} />
                       </div>
                       <span className="text-sm font-medium text-white/90">{label}</span>
@@ -146,7 +151,6 @@ export default function AuthForm() {
 
       {/* ── RIGHT PANEL — auth form ───────────────────────────── */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-8 relative overflow-hidden">
-
         {/* Subtle background blobs on mobile / right side */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute right-0 top-0 h-[28rem] w-[28rem] rounded-full bg-[#DDE6D5]/60 blur-3xl" />
@@ -154,10 +158,14 @@ export default function AuthForm() {
         </div>
 
         <div className="relative z-10 w-full max-w-lg">
-
           {/* Mobile logo (hidden on lg+) */}
           <FadeIn className="mb-8 flex items-center gap-3 lg:hidden">
-            <img src="/favicon-v1.png" alt="Plated" className="h-12 w-12 object-contain" style={{ filter: 'hue-rotate(55deg) saturate(3) brightness(0.65)' }} />
+            <img
+              src="/favicon-v1.png"
+              alt="Plated"
+              className="h-12 w-12 object-contain"
+              style={{ filter: 'hue-rotate(55deg) saturate(3) brightness(0.65)' }}
+            />
             <span className="font-playfair text-2xl font-bold text-hero-heading">Plated</span>
           </FadeIn>
 
@@ -168,7 +176,7 @@ export default function AuthForm() {
               style={{
                 backdropFilter: 'blur(20px)',
                 border: '1px solid rgba(97,140,69,0.12)',
-                boxShadow: '0 4px 32px rgba(44,73,39,0.08), 0 1px 0 rgba(255,255,255,0.95) inset',
+                boxShadow: '0 4px 32px rgba(44,73,39,0.08), 0 1px 0 rgba(255,255,255,0.95) inset'
               }}
             >
               {/* Header */}
@@ -183,7 +191,7 @@ export default function AuthForm() {
                 <p className="mt-2 text-lg text-hero-sub">
                   {isLogin
                     ? "Good to see you again — let's get planning."
-                    : "Takes 10 seconds, no credit card needed."}
+                    : 'Takes 10 seconds, no credit card needed.'}
                 </p>
               </div>
 
@@ -196,7 +204,6 @@ export default function AuthForm() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
-
                 {/* Email */}
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-hero-heading">
@@ -267,7 +274,10 @@ export default function AuthForm() {
                   className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   {isLogin ? 'Log in' : 'Create my account'}
-                  <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform duration-200 group-hover:translate-x-0.5"
+                  />
                 </button>
               </form>
 
@@ -276,7 +286,11 @@ export default function AuthForm() {
                 {isLogin ? "Don't have an account? " : 'Already have an account? '}
                 <button
                   type="button"
-                  onClick={() => { setIsLogin(!isLogin); setPasswordError(false); setAccountError(false); }}
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setPasswordError(false);
+                    setAccountError(false);
+                  }}
                   className="font-semibold text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline"
                 >
                   {isLogin ? 'Sign up free' : 'Log in'}

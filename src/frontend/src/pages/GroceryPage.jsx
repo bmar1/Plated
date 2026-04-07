@@ -20,7 +20,7 @@ const GroceryListPage = () => {
   const loadGrocery = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/meals/groceryList`, {
+      const response = await fetch(`process.env.API_URL/meals/groceryList`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +39,6 @@ const GroceryListPage = () => {
         setGroceryList([]);
       }
     } catch (error) {
-      
       setGroceryList([]);
     } finally {
       setIsLoading(false);
@@ -101,7 +100,6 @@ const GroceryListPage = () => {
     const itemsParams = groceryList
       .map((item, index) => {
         if (!item.productUrl) {
-          
           return null;
         }
 
@@ -118,10 +116,9 @@ const GroceryListPage = () => {
 
     if (itemsParams) {
       const finalUrl = `${baseUrl}${itemsParams}`;
-      
+
       openNewTab(finalUrl);
     } else {
-      
       alert('Could not find any valid items to add.');
     }
   };

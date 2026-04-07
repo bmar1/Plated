@@ -16,7 +16,7 @@ export default function Settings({ setShowSettings, setShowPreferences }) {
   // On success, it clears localStorage and redirects to the login page.
   const handleDeleteAccount = async () => {
     try {
-      const response = await fetch('/api/auth/delete', {
+      const response = await fetch('process.env.API_URL/auth/delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export default function Settings({ setShowSettings, setShowPreferences }) {
 
   const handleNewMealPlan = async () => {
     try {
-      const res = await fetch('/api/onboarding', {
+      const res = await fetch('process.env.API_URL/onboarding', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

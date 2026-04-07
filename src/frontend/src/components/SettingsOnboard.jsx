@@ -24,7 +24,7 @@ const SettingsOnboard = ({ setShowPreferences }) => {
     setShowPreferences(false);
 
     try {
-      const res = await fetch('api/user/preferences', {
+      const res = await fetch('process.env.API_URL/user/preferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
