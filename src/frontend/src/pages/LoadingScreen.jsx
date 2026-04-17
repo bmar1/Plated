@@ -13,7 +13,7 @@ import { ChefHat } from 'lucide-react';
 
 const GENERIC_MESSAGES = [
   'Loading your dashboard…',
-  'Fetching today's meals…',
+  'Fetching todays meals…',
   'Checking your progress…',
 ];
 
