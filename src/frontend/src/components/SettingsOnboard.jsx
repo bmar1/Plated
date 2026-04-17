@@ -24,6 +24,13 @@ const SettingsOnboard = ({ setShowPreferences }) => {
   const handleSubmit = async () => {
     setShowPreferences(false);
 
+    const payload = {
+      ...formData,
+      calories: Number(formData.calories),
+      budget: Number(formData.budget),
+      meals: Number(formData.meals)
+    };
+
     try {
       const res = await fetch(`${VITE_API_URL}/user/preferences`, {
         method: 'POST',
@@ -31,7 +38,7 @@ const SettingsOnboard = ({ setShowPreferences }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
 
       localStorage.removeItem('onboarding');

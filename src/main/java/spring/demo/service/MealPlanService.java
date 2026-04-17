@@ -77,8 +77,8 @@ public class MealPlanService {
 
 
         if (recipieList.isEmpty()) {
-            List<Recipe> allRecipes = recipeRepository.findAll();
-            return recipieList;
+            log.warn("No recipes found by category — falling back to all recipes in DB");
+            return new ArrayList<>(recipeRepository.findAll());
         }
 
         if(Objects.equals(enableIngredientFilter, "true"))

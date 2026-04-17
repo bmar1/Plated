@@ -23,7 +23,7 @@ services:
     # Render builds the image from the repo-root Dockerfile.
     dockerfilePath: ./Dockerfile
     # Render automatically injects PORT; Spring Boot reads it via server.port=${PORT:8080}
-    healthCheckPath: /api/auth/health
+    # No healthCheckPath — no /health endpoint exists; Render checks the open port instead.
     envVars:
 
       # ── Neon PostgreSQL ────────────────────────────────────────────────────

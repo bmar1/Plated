@@ -32,6 +32,15 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
     setShowOnboarding(false);
     setShowLoading(true);
 
+    // Sliders return string values from e.target.value — coerce to numbers so
+    // Spring Boot's @RequestBody deserialization and the validation checks work correctly.
+    const payload = {
+      ...formData,
+      calories: Number(formData.calories),
+      budget: Number(formData.budget),
+      meals: Number(formData.meals)
+    };
+
     try {
       const res = await fetch(`${VITE_API_URL}/onboarding`, {
         method: 'POST',
@@ -39,7 +48,7 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
 
       localStorage.setItem('pref', JSON.stringify(formData));

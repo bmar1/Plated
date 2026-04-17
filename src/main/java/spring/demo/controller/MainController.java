@@ -127,7 +127,8 @@ public class MainController {
 
         userRepository.save(user);
 
-        if(recipieList.isEmpty() || recipieList.size() < 13){
+        if (recipieList.isEmpty()) {
+            log.error("Onboarding produced zero recipes — returning 500");
             return ResponseEntity.status(500).build();
         }
 
@@ -187,11 +188,12 @@ public class MainController {
 
         userRepository.save(user);
 
-        if(recipieList.isEmpty() || recipieList.size() < 13){
+        if (recipieList.isEmpty()) {
+            log.error("New meal-plan produced zero recipes — returning 500");
             return ResponseEntity.status(500).build();
         }
 
-        log.info("=== ONBOARDING SUCCESS: Returning {} recipes ===", recipieList.size());
+        log.info("=== MEAL PLAN SUCCESS: Returning {} recipes ===", recipieList.size());
         return ResponseEntity.ok(recipieList);
     }
 
@@ -348,7 +350,8 @@ public class MainController {
             return ResponseEntity.ok(recipe.get());
         else return ResponseEntity.status(404).build();
     }
-    @GetMapping("/user/grocery-list")
+    // "/meals/groceryList" kept for backwards-compat with GroceryPage.jsx
+    @GetMapping({"/user/grocery-list", "/meals/groceryList"})
     public List<Ingredient> groceryList(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
 
