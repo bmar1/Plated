@@ -1,122 +1,221 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+/**
+ * @file NewMealShowcase.jsx
+ * @description Modal that celebrates a newly generated meal plan.
+ * Styled to match the Landing/About/Login premium editorial aesthetic:
+ * warm cream background, `warm-pane` glass surface, Playfair headings,
+ * sage primary, and smooth framer-motion enter/exit.
+ */
 
-const NewMealPlanShowcase = ({ meals, onClose }) => {
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Flame, Salad, Sparkles, X } from 'lucide-react';
+
+const EASE_OUT = [0.23, 1, 0.32, 1];
+const MEAL_FALLBACK = '/meal.jpg';
+
+const handleImgFallback = (e) => {
+  if (e.currentTarget.src.endsWith(MEAL_FALLBACK)) return;
+  e.currentTarget.src = MEAL_FALLBACK;
+};
+
+function MealCard({ meal, index, onClick, delay, reduceMotion }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay, ease: EASE_OUT }}
+      whileHover={reduceMotion ? undefined : { y: -4 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+      className="group warm-pane flex w-full cursor-pointer flex-col overflow-hidden rounded-[1.75rem] text-left shadow-lg shadow-primary/[0.05] transition-shadow duration-300 ease-out hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    >
+      <div className="relative z-10 flex h-full flex-col">
+        <div className="relative h-44 overflow-hidden">
+          <img
+            src={meal.thumbnail || MEAL_FALLBACK}
+            alt={meal.name}
+            loading="lazy"
+            onError={handleImgFallback}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to top, rgba(24,36,18,0.45) 0%, rgba(24,36,18,0.08) 45%, transparent 70%)',
+            }}
+          />
+          <div className="absolute left-3 top-3">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-primary shadow-sm"
+              style={{ backdropFilter: 'blur(10px)' }}
+            >
+              <Sparkles size={10} />
+              #{index + 1}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+          <h3 className="line-clamp-2 text-lg font-bold leading-tight text-hero-heading transition-colors duration-200 ease-out group-hover:text-primary">
+            {meal.name}
+          </h3>
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {meal.calories != null && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                <Flame size={11} />
+                {meal.calories} cal
+              </span>
+            )}
+            {meal.category && (
+              <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-hero-sub">
+                {meal.category}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-5 flex items-center gap-1.5 text-sm font-semibold text-primary">
+            View recipe
+            <ArrowRight
+              size={14}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-0.5"
+            />
+          </div>
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+export default function NewMealPlanShowcase({ meals, onClose }) {
   const navigate = useNavigate();
-  const displayMeals = meals.slice(0, 3);
+  const reduceMotion = useReducedMotion();
+  const displayMeals = (meals || []).slice(0, 3);
 
   const onMealClick = (recipeName) => {
     navigate('/recipe', { state: { name: recipeName } });
   };
 
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handleKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  const gridClass =
+    displayMeals.length === 2
+      ? 'grid-cols-1 sm:grid-cols-2'
+      : displayMeals.length === 1
+      ? 'grid-cols-1'
+      : 'grid-cols-1 md:grid-cols-3';
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-4 sm:p-8 relative">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 sm:top-6 sm:right-6 text-gray-400 hover:text-gray-700 transition-all hover:rotate-90 duration-300"
-          aria-label="Close"
+    <AnimatePresence>
+      <motion.div
+        key="meal-showcase-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: EASE_OUT }}
+        onClick={onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="meal-showcase-title"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+        style={{
+          background: 'rgba(28, 36, 24, 0.48)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+        }}
+      >
+        <motion.div
+          key="meal-showcase-panel"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 12 }}
+          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98, y: 6 }}
+          transition={{ duration: 0.28, ease: EASE_OUT }}
+          onClick={(e) => e.stopPropagation()}
+          className="warm-pane relative w-full max-w-4xl overflow-hidden rounded-[2rem] p-6 shadow-2xl shadow-primary/[0.18] sm:p-10"
         >
-          <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
-        {/* Header */}
-        <div className="mb-6 sm:mb-8 text-center">
-          <div className="inline-block bg-gradient-to-r from-[#6d9851] to-[#5A7A4D] text-white px-3 py-1 rounded-full text-xs font-semibold mb-2 sm:mb-3">
-            NEW MEAL PLAN
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Your Fresh Selections</h2>
-          <p className="text-base sm:text-lg text-gray-500">Delicious meals ready for you to cook</p>
-        </div>
-
-        {/* Meals Grid - Adjusts based on number of meals */}
-        <div
-          className={`grid gap-4 sm:gap-6 ${
-            displayMeals.length === 2
-              ? 'grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto'
-              : 'grid-cols-1 md:grid-cols-3'
-          }`}
-        >
-          {displayMeals.map((meal, index) => (
-            <div
-              key={meal.id || index}
-              onClick={() => onMealClick(meal.name)}
-              className="group bg-white rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-gray-100 hover:border-[#6d9851]"
+          <div className="relative z-10">
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="absolute right-0 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/12 bg-white/70 text-hero-sub transition-colors duration-200 ease-out hover:bg-white hover:text-hero-heading focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
-              {/* Image Container */}
-              <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                <img
-                  src={meal.thumbnail}
-                  alt={meal.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+              <X size={18} />
+            </button>
 
-                {/* meal number badge */}
-                <div className="absolute top-3 right-3 bg-[#6d9851] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                  #{index + 1}
-                </div>
+            {/* Header */}
+            <div className="mb-8 text-center sm:mb-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                <Salad size={12} />
+                New meal plan
               </div>
-
-              <div className="p-5">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-[#6d9851] transition-colors line-clamp-2">
-                  {meal.name}
-                </h3>
-
-                <div className="flex items-center gap-2 text-sm mb-3">
-                  {meal.calories && (
-                    <div className="flex items-center text-gray-600">
-                      <span className="font-medium">{meal.calories} cal</span>
-                    </div>
-                  )}
-
-                  {meal.category && (
-                    <div className="inline-block bg-gradient-to-r from-[#6d9851]/10 to-[#5A7A4D]/10 text-[#5A7A4D] px-3 py-1 rounded-lg text-xs font-semibold border border-[#6d9851]/20">
-                      {meal.category}
-                    </div>
-                  )}
-                </div>
-
-                {/* View Recipe Arrow */}
-                <div className="mt-4 flex items-center text-[#6d9851] font-semibold text-sm group-hover:translate-x-1 transition-transform">
-                  View Recipe
-                  <svg
-                    className="w-4 h-4 ml-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <h2
+                id="meal-showcase-title"
+                className="mt-5 text-3xl font-bold tracking-tight text-hero-heading sm:text-4xl"
+              >
+                Your fresh selections
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-hero-sub sm:text-lg">
+                Three meals, picked for your week. Tap any to see the full recipe.
+              </p>
             </div>
-          ))}
-        </div>
 
-        {/* footer */}
-        <div className="mt-8 text-center">
-          <button
-            onClick={onClose}
-            className="bg-gradient-to-r from-[#6d9851] to-[#5A7A4D] text-white px-6 py-2 sm:px-8 sm:py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105"
-          >
-            Start Cooking!
-          </button>
-        </div>
-      </div>
-    </div>
+            {/* Meals grid */}
+            {displayMeals.length > 0 ? (
+              <div className={`mx-auto grid gap-4 sm:gap-6 ${gridClass}`}>
+                {displayMeals.map((meal, index) => (
+                  <MealCard
+                    key={meal.id ?? `${meal.name}-${index}`}
+                    meal={meal}
+                    index={index}
+                    delay={0.1 + index * 0.06}
+                    onClick={() => onMealClick(meal.name)}
+                    reduceMotion={reduceMotion}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="mx-auto max-w-md rounded-[1.5rem] border border-border/60 bg-white/70 p-6 text-center text-hero-sub">
+                No meals ready yet — try again in a moment.
+              </div>
+            )}
+
+            {/* Footer CTA */}
+            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 ease-out hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                Start cooking
+                <ArrowRight size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/12 bg-white/70 px-7 py-3 text-base font-semibold text-hero-heading transition-colors duration-200 ease-out hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
-};
-
-export default NewMealPlanShowcase;
+}

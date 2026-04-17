@@ -1,33 +1,69 @@
 /**
  * @file Dashboard.jsx
- * @description Redesigned dashboard with editorial magazine aesthetic
- * Aesthetic Direction: Editorial Luxury / Modern Kitchen Journal
- * - Warm brown/green palette matching Landing & Auth (caramel, golden tan, sage)
- * - Playfair Display + Crimson Text (consistency with Landing)
- * - Proper bento grid layout with balanced card sizes
- * - Paper-like textures and refined gradients
- * - Smooth animations and micro-interactions
+ * @description Premium editorial dashboard matching the Landing/About/Login aesthetic.
+ *
+ * Design direction (aligned with Landing.jsx):
+ * - Warm cream/ivory background with ambient sage + butter blobs.
+ * - `warm-pane` glass surfaces, rounded-[1.75rem]–[2rem] radii, Playfair + Crimson.
+ * - Sage primary, hero-heading ink for numbers, hero-sub for body, deep-sage #5A7A4D for budget surfaces.
+ * - Framer-motion FadeIn with stagger (30–80ms) and ease-out; respects `prefers-reduced-motion`.
  */
 
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  CalendarDays,
+  ChefHat,
+  Flame,
+  Target,
+  Timer,
+  ShoppingCart,
+  TrendingDown,
+  Sparkles,
+  ArrowRight,
+} from 'lucide-react';
 import OnboardingCard from '../components/OnboardCard';
 import Settings from '../components/Settings';
 import SettingsOnboard from '../components/SettingsOnboard';
 import Nav from '../components/Navbar';
 import NewMealPlanShowcase from '../components/NewMealShowcase';
 import LoadingScreen from './LoadingScreen';
+import AmbientBackdrop from '../components/AmbientBackdrop';
 import { VITE_API_URL } from '../config/env';
 
-// --- Caching Configuration ---
 const ENABLE_CACHE = true;
 const CACHE_KEY = 'dashboard_cache_data';
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+const CACHE_DURATION = 30 * 60 * 1000;
+
+// Local fallbacks served from /public — used when an API-provided image URL fails to load.
+const MEAL_FALLBACK = '/meal.jpg';
+const GROCERY_FALLBACK = '/icons/groceryIcon.png';
+
+const handleImgFallback = (fallback) => (e) => {
+  if (e.currentTarget.src.endsWith(fallback)) return;
+  e.currentTarget.src = fallback;
+};
+
+function FadeIn({ children, delay = 0, className = '' }) {
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay, ease: [0.23, 1, 0.32, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
-  // State variables
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [meals, setMeals] = useState([]);
@@ -49,7 +85,6 @@ export default function Dashboard() {
   const [budget, setBudget] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // --- Navigation Handlers ---
   const handleLogout = () => {
     clearAuth();
     clearCache();
@@ -70,7 +105,6 @@ export default function Dashboard() {
     }
   };
 
-  // --- Effects ---
   useEffect(() => {
     const onboardingStatus = localStorage.getItem('onboarding');
     if (onboardingStatus === 'true') {
@@ -96,15 +130,12 @@ export default function Dashboard() {
     }
   }, [grocery, shouldNavigate, navigate]);
 
-  // --- Cache Helper Functions ---
   const getCache = () => {
     try {
       const cachedItem = localStorage.getItem(CACHE_KEY);
       if (!cachedItem) return null;
-
       const { timestamp, data } = JSON.parse(cachedItem);
       const isExpired = Date.now() - timestamp > CACHE_DURATION;
-
       return { data, isExpired };
     } catch (error) {
       console.error('Error getting cache:', error);
@@ -114,12 +145,8 @@ export default function Dashboard() {
 
   const setCache = (data) => {
     try {
-      const itemToCache = {
-        timestamp: Date.now(),
-        data: data
-      };
+      const itemToCache = { timestamp: Date.now(), data };
       localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
-      console.log('Cache set successfully.');
     } catch (error) {
       console.error('Error setting cache:', error);
     }
@@ -128,7 +155,6 @@ export default function Dashboard() {
   const clearCache = () => {
     try {
       localStorage.removeItem(CACHE_KEY);
-      console.log('Cache cleared.');
     } catch (error) {
       console.error('Error clearing cache:', error);
     }
@@ -143,7 +169,6 @@ export default function Dashboard() {
     }
   };
 
-  // --- Data Processing and State Update Helpers ---
   const getNormalizedWords = (name) => {
     if (!name) return [];
     return name
@@ -158,35 +183,27 @@ export default function Dashboard() {
   const getSimilarityScore = (name1, name2) => {
     const words1 = getNormalizedWords(name1);
     const words2 = getNormalizedWords(name2);
-
     if (words1.length === 0 || words2.length === 0) return 0;
-
     const matches = words1.filter((word) => words2.includes(word)).length;
     const totalWords = Math.max(words1.length, words2.length);
-
     return matches / totalWords;
   };
 
   const filterGroceryList = (list) => {
     const filteredList = [];
     const seenItems = [];
-
     list.forEach((item) => {
-      if (!item || !item.name || item.name.toLowerCase() === 'null') {
-        return;
-      }
+      if (!item || !item.name || item.name.toLowerCase() === 'null') return;
       const normalizedName = item.name.toLowerCase().trim();
       const isSimilar = seenItems.some((seenItem) => {
         const similarity = getSimilarityScore(normalizedName, seenItem.name);
         return similarity >= 0.5;
       });
-
       if (!isSimilar) {
         filteredList.push(item);
         seenItems.push({ name: normalizedName, original: item });
       }
     });
-
     return filteredList;
   };
 
@@ -204,27 +221,23 @@ export default function Dashboard() {
     setIsGroceryLoading(false);
   };
 
-  // --- Main Data Loading Function ---
   const loadDashboardData = async () => {
     setIsLoading(true);
 
     const cached = getCache();
     if (cached && !cached.isExpired) {
-      console.log('Cache hit. Loading data instantly.');
       updateDashboardState(cached.data);
       setUsedCache(true);
       setIsLoading(false);
-    } else {
-      console.log('Cache miss or expired. Will show loading screen until API fetch is complete.');
     }
+
     try {
-      console.log('Fetching from API in the background...');
       const response = await fetch(`${VITE_API_URL}/load`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
 
       if (!response.ok) {
@@ -239,18 +252,15 @@ export default function Dashboard() {
         const hasDifference = JSON.stringify(oldMealIds) !== JSON.stringify(newMealIds);
 
         if (hasDifference) {
-          console.log('Meal plan has changed. Invalidating cache and showing popup.');
           setShowNewMealPlan(true);
           updateDashboardState(newData);
         }
       } else {
         updateDashboardState(newData);
-        if (!cached) {
-          setShowNewMealPlan(true);
-        }
+        if (!cached) setShowNewMealPlan(true);
       }
 
-      setCache(newData);
+      if (ENABLE_CACHE) setCache(newData);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       clearCache();
@@ -261,119 +271,25 @@ export default function Dashboard() {
       setGroceryPreview([]);
     } finally {
       if (!usedCache) {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 600);
+        setTimeout(() => setIsLoading(false), 600);
       }
     }
   };
 
+  const todayLabel = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const featured = meals[currentIndex];
+  const savings = Math.max(95 - budget, 0);
+  const clampedProgress = Math.min(Math.max(progress, 0), 100);
+
   return (
-    <div className="min-h-screen bg-[#fdfcf9] relative overflow-hidden">
-      {/* Custom Styles */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Crimson+Text:wght@400;600;700&display=swap');
-        
-        html {
-          scroll-behavior: smooth;
-        }
-        
-        * {
-          font-family: 'Crimson Text', serif;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Playfair Display', serif;
-        }
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      <AmbientBackdrop position="fixed" variant="default" />
 
-        /* Paper texture overlay */
-        .paper-texture {
-          position: relative;
-        }
-
-        .paper-texture::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)' opacity='0.02'/%3E%3C/svg%3E");
-          pointer-events: none;
-          mix-blend-mode: multiply;
-          border-radius: inherit;
-        }
-
-        /* Smooth card hover */
-        .organic-card {
-          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                      box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .organic-card:hover {
-          transform: translateY(-4px) scale(1.01);
-        }
-
-        /* Staggered animations */
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .animate-scale-in {
-          animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        
-        	.handwritten-accent {
-          position: relative;
-          display: inline-block;
-        }
-
-        .handwritten-accent::after {
-          content: '';
-          position: absolute;
-          bottom: -4px;
-          left: -4px;
-          right: -4px;
-          height: 12px;
-          background: linear-gradient(to right, #d4a574 0%, #c9956d 100%);
-          opacity: 0.3;
-          transform: skewY(-1deg);
-          border-radius: 2px;
-          z-index: -1;
-        }
-
-        /* Smooth progress bar */
-        .progress-bar {
-          transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-      `}</style>
-
-      {/* Subtle background elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-radial from-[#d4a574]/10 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-radial from-[#618c45]/8 to-transparent rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Overlay components */}
       {isLoading && <LoadingScreen />}
       <Nav
         isNavVisible={isNavVisible}
@@ -387,7 +303,9 @@ export default function Dashboard() {
       />
 
       <main
-        className={`px-4 sm:px-6 py-8 sm:py-12 lg:px-12 lg:py-16 transition-all duration-500 ${isNavVisible ? 'ml-60' : 'ml-20'} relative z-10`}
+        className={`relative z-10 px-4 py-8 transition-[margin] duration-500 ease-out sm:px-6 sm:py-12 lg:px-12 lg:py-16 ${
+          isNavVisible ? 'ml-60' : 'ml-20'
+        }`}
       >
         {showNewMealPlan && (
           <NewMealPlanShowcase meals={meals} onClose={() => setShowNewMealPlan(false)} />
@@ -400,395 +318,421 @@ export default function Dashboard() {
         )}
         {showPreferences && <SettingsOnboard setShowPreferences={setShowPreferences} />}
 
-        {/* Header */}
-        <div
-          className="max-w-[1600px] mx-auto mb-12 animate-fade-in-up"
-          style={{ animationDelay: '0.1s' }}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div>
-              <p className="text-xs font-bold tracking-[0.15em] uppercase text-[#a38968] mb-3">
-                {new Date().toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#2d2416] mb-2 leading-tight">
-                Your Kitchen,
-                <br />
-                <span className="handwritten-accent">Today</span>
-              </h1>
-              <p className="text-base sm:text-lg text-[#6b5d4f] font-medium max-w-2xl mt-4">
-                Fresh meals, smart planning, and savings you can taste
-              </p>
+        {/* ── HEADER ───────────────────────────────────────────── */}
+        <div className="mx-auto mb-12 max-w-[1600px]">
+          <FadeIn>
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-sm backdrop-blur-sm">
+              <CalendarDays size={14} />
+              {todayLabel}
             </div>
-          </div>
+          </FadeIn>
+
+          <FadeIn delay={0.08}>
+            <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-hero-heading sm:text-5xl lg:text-6xl">
+              Your kitchen,
+              <br />
+              <span className="text-gradient">today.</span>
+            </h1>
+          </FadeIn>
+
+          <FadeIn delay={0.16}>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-hero-sub">
+              Fresh meals, smart planning, and savings you can taste — all in one calm view.
+            </p>
+          </FadeIn>
         </div>
 
-        {/* Main Content Grid - Improved Bento Box Layout */}
-        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          {/* LEFT COLUMN - Featured Meal + Calorie Balance (spans 7 columns) */}
-          <div className="lg:col-span-7 flex flex-col gap-6 lg:gap-8">
-            {/* Featured Meal Card - REDUCED HEIGHT */}
-            {meals.length > 0 && (
-              <div
-                className="organic-card paper-texture bg-white rounded-[32px] overflow-hidden shadow-[0_8px_32px_rgba(45,36,22,0.08)] group cursor-pointer animate-scale-in"
-                style={{ animationDelay: '0.2s' }}
-                onClick={() => handleRecipeClick(meals[currentIndex].name)}
-              >
-                {/* Image Container - REDUCED to h-[350px] */}
-                <div className="relative h-[350px] sm:h-[400px] overflow-hidden">
-                  <img
-                    src={meals[currentIndex].thumbnail}
-                    alt={meals[currentIndex].name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+        {/* ── BENTO GRID ───────────────────────────────────────── */}
+        <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+          {/* LEFT COLUMN — Featured meal + Calorie balance */}
+          <div className="flex flex-col gap-6 lg:col-span-7 lg:gap-8">
+            {/* Featured meal */}
+            {featured && (
+              <FadeIn delay={0.2}>
+                <motion.div
+                  whileHover={reduceMotion ? undefined : { y: -4 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  onClick={() => handleRecipeClick(featured.name)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') handleRecipeClick(featured.name);
+                  }}
+                  className="warm-pane group cursor-pointer overflow-hidden rounded-[2rem] shadow-xl shadow-primary/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  <div className="relative z-10 overflow-hidden rounded-[calc(2rem-4px)] m-1">
+                    <div className="relative h-[360px] overflow-hidden sm:h-[420px]">
+                      <img
+                        src={featured.thumbnail || MEAL_FALLBACK}
+                        alt={featured.name}
+                        loading="lazy"
+                        onError={handleImgFallback(MEAL_FALLBACK)}
+                        className="h-full w-full object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.04]"
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            'linear-gradient(to top, rgba(24,36,18,0.78) 0%, rgba(24,36,18,0.25) 45%, transparent 75%)',
+                        }}
+                      />
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
-                    {/* Category Badge */}
-                    <div className="inline-flex items-center gap-2 mb-3 self-start">
-                      <span className="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold tracking-wider uppercase text-[#2d2416]">
-                        {meals[currentIndex].category || 'Featured'}
-                      </span>
-                    </div>
-
-                    {/* Meal Name */}
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight max-w-2xl">
-                      {meals[currentIndex].name}
-                    </h2>
-
-                    {/* Stats Row */}
-                    <div className="flex flex-wrap items-center gap-4 text-white/90">
-                      <div className="flex items-center gap-2">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      {/* Top-left featured chip */}
+                      <div className="absolute left-5 top-5">
+                        <div
+                          className="inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary shadow-sm"
+                          style={{ backdropFilter: 'blur(10px)' }}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 10V3L4 14h7v7l9-11h-7z"
-                          />
-                        </svg>
-                        <span className="text-sm font-bold">
-                          {meals[currentIndex].calories} cal
-                        </span>
+                          <Sparkles size={11} />
+                          Tonight's pick
+                        </div>
                       </div>
 
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full">
-                          <span className="text-sm font-bold">View Recipe</span>
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                      {/* Top-right category */}
+                      <div className="absolute right-5 top-5">
+                        <div
+                          className="rounded-full px-3 py-1.5 text-xs font-semibold text-white shadow-md"
+                          style={{ background: 'rgba(90,122,77,0.92)', backdropFilter: 'blur(10px)' }}
+                        >
+                          {featured.category || 'Featured'}
+                        </div>
+                      </div>
+
+                      {/* Bottom overlay copy */}
+                      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                        <h2 className="max-w-2xl text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl">
+                          {featured.name}
+                        </h2>
+
+                        <div className="mt-4 flex flex-wrap items-center gap-3">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+                            <Flame size={12} />
+                            {featured.calories} cal
+                          </span>
+                          <span
+                            className="inline-flex translate-x-0 items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white opacity-0 backdrop-blur-sm transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
+                            View recipe
+                            <ArrowRight size={12} />
+                          </span>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* Navigation Dots */}
-                <div className="flex justify-center gap-2 py-5 bg-gradient-to-b from-transparent to-[#fdfcf9]/50">
-                  {meals.slice(0, 4).map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentIndex(i);
-                      }}
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        currentIndex === i
-                          ? 'w-12 bg-[#d4a574]'
-                          : 'w-2 bg-[#d4a574]/30 hover:bg-[#d4a574]/50 hover:w-6'
-                      }`}
-                      aria-label={`View meal ${i + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
+                    {/* Dots nav */}
+                    <div className="flex items-center justify-center gap-2 py-4">
+                      {meals.slice(0, 4).map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentIndex(i);
+                          }}
+                          aria-label={`Show meal ${i + 1}`}
+                          className={`h-2 cursor-pointer rounded-full transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                            currentIndex === i
+                              ? 'w-10 bg-primary'
+                              : 'w-2 bg-primary/25 hover:w-6 hover:bg-primary/45'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </FadeIn>
             )}
 
-            {/* Calorie Balance Card - MOVED HERE */}
-            <div
-              className="organic-card paper-texture bg-white rounded-[32px] p-6 sm:p-8 shadow-[0_8px_32px_rgba(45,36,22,0.08)] animate-fade-in-up"
-              style={{ animationDelay: '0.6s' }}
-            >
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-                {/* Left: Info */}
-                <div className="flex-1">
-                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-[#8B6F47] mb-3">
-                    Daily Nutrition
-                  </p>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#2d2416] mb-3">
-                    Calorie Balance
-                  </h3>
-                  <p className="text-sm text-[#6B5746] font-medium max-w-xl">
-                    Track your daily intake and stay balanced with your nutrition goals
-                  </p>
-                </div>
-
-                {/* Right: Stats Grid */}
-                <div className="grid grid-cols-3 gap-4 sm:gap-6">
-                  {/* Eaten */}
-                  <div className="text-center">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-[#618c45] to-[#7ab05d] flex items-center justify-center shadow-lg">
-                      <svg
-                        className="w-7 h-7 sm:w-8 sm:h-8 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
+            {/* Calorie balance */}
+            <FadeIn delay={0.28}>
+              <div className="warm-pane rounded-[2rem] p-6 shadow-lg shadow-primary/[0.05] sm:p-8">
+                <div className="relative z-10">
+                  <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/75">
+                        Daily nutrition
+                      </p>
+                      <h3 className="mt-2 text-2xl font-bold text-hero-heading sm:text-3xl">
+                        Calorie balance
+                      </h3>
+                      <p className="mt-2 max-w-xl text-base leading-relaxed text-hero-sub">
+                        Track your intake and stay aligned with today's goal — no guesswork.
+                      </p>
                     </div>
-                    <p className="text-xl sm:text-2xl font-black text-[#2d2416] mb-1">{eaten}</p>
-                    <p className="text-xs font-bold tracking-wider uppercase text-[#8B6F47]">
-                      Eaten
-                    </p>
+
+                    <div className="grid flex-shrink-0 grid-cols-3 gap-4 sm:gap-6">
+                      <StatTile
+                        icon={<Flame size={18} />}
+                        value={eaten}
+                        label="Eaten"
+                        tone="primary"
+                      />
+                      <StatTile
+                        icon={<Target size={18} />}
+                        value={target}
+                        label="Target"
+                        tone="accent"
+                      />
+                      <StatTile
+                        icon={<Timer size={18} />}
+                        value={remaining}
+                        label="Left"
+                        tone="ink"
+                      />
+                    </div>
                   </div>
 
-                  {/* Target */}
-                  <div className="text-center">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-[#d4a574] to-[#c9956d] flex items-center justify-center shadow-lg">
-                      <svg
-                        className="w-7 h-7 sm:w-8 sm:h-8 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
+                  {/* Progress bar */}
+                  <div className="mt-8 border-t border-border/60 pt-6">
+                    <div className="mb-3 flex items-center justify-between text-sm">
+                      <span className="font-semibold text-hero-heading">Daily progress</span>
+                      <span className="font-semibold text-primary">
+                        {Math.round(clampedProgress)}%
+                      </span>
                     </div>
-                    <p className="text-xl sm:text-2xl font-black text-[#2d2416] mb-1">{target}</p>
-                    <p className="text-xs font-bold tracking-wider uppercase text-[#8B6F47]">
-                      Target
-                    </p>
-                  </div>
-
-                  {/* Remaining */}
-                  <div className="text-center">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-[#2d2416] to-[#3d3426] flex items-center justify-center shadow-lg">
-                      <svg
-                        className="w-7 h-7 sm:w-8 sm:h-8 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                        />
-                      </svg>
+                    <div className="relative h-2.5 overflow-hidden rounded-full bg-secondary">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${clampedProgress}%` }}
+                        transition={{
+                          duration: reduceMotion ? 0 : 0.9,
+                          ease: [0.23, 1, 0.32, 1],
+                          delay: 0.1,
+                        }}
+                        className="h-full rounded-full bg-primary"
+                      />
                     </div>
-                    <p className="text-xl sm:text-2xl font-black text-[#2d2416] mb-1">
-                      {remaining}
-                    </p>
-                    <p className="text-xs font-bold tracking-wider uppercase text-[#8B6F47]">
-                      Left
-                    </p>
                   </div>
                 </div>
               </div>
-
-              {/* Progress Bar */}
-              <div className="mt-8 pt-8 border-t border-[#2d2416]/5">
-                <div className="flex justify-between text-sm font-bold text-[#6B5746] mb-3">
-                  <span>Daily Progress</span>
-                  <span>{Math.round(progress)}%</span>
-                </div>
-                <div className="h-3 bg-gradient-to-r from-[#f7f2e1] to-[#ede4c8] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#618c45] to-[#7ab05d] rounded-full progress-bar shadow-lg"
-                    style={{ width: `${Math.min(progress, 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
+            </FadeIn>
           </div>
 
-          {/* RIGHT COLUMN - Stacked Cards (spans 5 columns) */}
-          <div className="lg:col-span-5 flex flex-col gap-6 lg:gap-8">
-            {/* Grocery List Card */}
-            <div
-              onClick={handleGroceryClick}
-              className="organic-card paper-texture bg-gradient-to-br from-[#618c45] to-[#7ab05d] rounded-[32px] p-6 sm:p-8 shadow-[0_8px_32px_rgba(97,140,69,0.25)] cursor-pointer animate-scale-in"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-white">Grocery List</h3>
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <span className="text-lg font-black text-white">{grocery.length}</span>
-                </div>
-              </div>
-
-              {isGroceryLoading ? (
-                <div className="py-8 text-center">
-                  <div className="inline-block h-2 w-16 bg-white/30 rounded-full overflow-hidden">
-                    <div className="h-full w-1/2 bg-white animate-pulse"></div>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {groceryPreview.map((item, idx) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-2xl hover:bg-white/20 transition-all duration-300"
-                      style={{ animationDelay: `${0.4 + idx * 0.1}s` }}
-                    >
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/20 flex-shrink-0">
-                        <img
-                          src={item.imageUrl || '/icons/groceryIcon.png'}
-                          className="w-full h-full object-cover"
-                          alt={item.name}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white truncate">{item.name}</p>
-                        <p className="text-lg font-black text-white/90 mt-1">
-                          ${item.totalPrice.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {!isGroceryLoading && grocery.length > 3 && (
-                <div className="mt-6 pt-6 border-t border-white/20">
-                  <p className="text-sm text-white/80 text-center font-medium">
-                    +{grocery.length - 3} more item{grocery.length - 3 !== 1 ? 's' : ''}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Savings Card */}
-            <div
-              className="organic-card paper-texture bg-gradient-to-br from-[#d4a574] to-[#c9956d] rounded-[32px] p-6 sm:p-8 shadow-[0_8px_32px_rgba(212,165,116,0.3)] animate-scale-in"
-              style={{ animationDelay: '0.4s' }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-[#2d2416]/60 mb-2">
-                    This Week
-                  </p>
-                  <h3 className="text-xl font-bold text-[#2d2416]">You Saved</h3>
-                </div>
-                <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-[#2d2416]"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="flex items-baseline gap-1 mb-3">
-                <span className="text-5xl sm:text-6xl font-black text-[#2d2416]">
-                  ${95 - budget}
-                </span>
-                <span className="text-2xl text-[#2d2416]/70 font-bold">.00</span>
-              </div>
-
-              <p className="text-sm text-[#2d2416]/70 font-medium">
-                Automatically tracked & calculated
-              </p>
-            </div>
-
-            {/* Next Up Card */}
-            <div
-              onClick={handlePotential}
-              className="organic-card paper-texture bg-white rounded-[32px] p-6 sm:p-8 shadow-[0_8px_32px_rgba(45,36,22,0.08)] cursor-pointer animate-scale-in"
-              style={{ animationDelay: '0.5s' }}
-            >
-              <h3 className="text-2xl font-bold text-[#2d2416] mb-6">Coming Up Next</h3>
-
-              {mealPreview.slice(0, 2).map((meal, index) => (
+          {/* RIGHT COLUMN — Grocery, Savings, Coming-up-next */}
+          <div className="flex flex-col gap-6 lg:col-span-5 lg:gap-8">
+            {/* Grocery list — deep sage (matches Landing MockDashboard budget card) */}
+            <FadeIn delay={0.24}>
+              <motion.div
+                whileHover={reduceMotion ? undefined : { y: -3 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                onClick={handleGroceryClick}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handleGroceryClick();
+                }}
+                className="relative cursor-pointer overflow-hidden rounded-[2rem] bg-[#5A7A4D] p-6 text-white shadow-xl shadow-primary/[0.18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:p-8"
+              >
+                {/* Soft inner highlight */}
                 <div
-                  key={index}
-                  className="flex items-start gap-4 mb-6 last:mb-0 p-4 rounded-2xl hover:bg-[#fdfcf9] transition-all duration-300"
-                >
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-[#f7f2e1]">
-                    <img
-                      src={meal.thumbnail}
-                      className="w-full h-full object-cover"
-                      alt={meal.name}
-                    />
-                  </div>
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      'radial-gradient(circle at 20% 0%, rgba(255,255,255,0.16), transparent 55%)',
+                  }}
+                />
 
-                  <div className="flex-1 pt-1">
-                    <p className="font-bold text-[#2d2416] leading-tight mb-3 text-base">
-                      {meal.name}
+                <div className="relative z-10 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
+                      This week's list
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1.5 bg-[#618c45]/10 rounded-xl text-xs font-bold text-[#618c45]">
-                        {meal.calories} cal
-                      </span>
-                      <span className="px-3 py-1.5 bg-[#2d2416]/5 rounded-xl text-xs font-bold text-[#6B5746]">
-                        {meal.category}
-                      </span>
+                    <h3 className="mt-1.5 text-2xl font-bold">Grocery</h3>
+                  </div>
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/12 backdrop-blur-sm">
+                    <ShoppingCart size={18} />
+                  </div>
+                </div>
+
+                {isGroceryLoading ? (
+                  <div className="relative z-10 mt-6 py-8 text-center">
+                    <div className="inline-block h-1.5 w-20 overflow-hidden rounded-full bg-white/20">
+                      <div className="h-full w-1/2 animate-pulse rounded-full bg-white/70" />
                     </div>
                   </div>
-                </div>
-              ))}
+                ) : (
+                  <div className="relative z-10 mt-6 space-y-3">
+                    {groceryPreview.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-4 rounded-2xl bg-white/10 p-3 backdrop-blur-sm transition-colors duration-200 ease-out hover:bg-white/15"
+                      >
+                        <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-white/15">
+                          <img
+                            src={item.imageUrl || GROCERY_FALLBACK}
+                            alt={item.name}
+                            loading="lazy"
+                            onError={handleImgFallback(GROCERY_FALLBACK)}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-white">{item.name}</p>
+                          <p className="mt-0.5 text-base font-bold text-white/95">
+                            ${item.totalPrice.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-              {mealPreview.length > 2 && (
-                <div className="mt-6 pt-6 border-t border-[#2d2416]/10">
-                  <p className="text-sm text-[#6B5746] text-center font-medium">
-                    +{mealPreview.length - 2} more meal{mealPreview.length - 2 !== 1 ? 's' : ''}
+                {!isGroceryLoading && grocery.length > 3 && (
+                  <div className="relative z-10 mt-5 flex items-center justify-between border-t border-white/15 pt-4">
+                    <p className="text-sm text-white/80">
+                      +{grocery.length - 3} more item{grocery.length - 3 !== 1 ? 's' : ''}
+                    </p>
+                    <span className="inline-flex items-center gap-1 text-sm font-semibold text-white/90 transition-transform duration-200 ease-out group-hover:translate-x-1">
+                      Open list
+                      <ArrowRight size={14} />
+                    </span>
+                  </div>
+                )}
+
+                {!isGroceryLoading && grocery.length === 0 && (
+                  <div className="relative z-10 mt-6 rounded-2xl bg-white/10 p-5 text-sm text-white/85">
+                    Your list is empty — add meals to generate one.
+                  </div>
+                )}
+              </motion.div>
+            </FadeIn>
+
+            {/* Savings */}
+            <FadeIn delay={0.32}>
+              <div className="warm-pane rounded-[2rem] p-6 shadow-lg shadow-primary/[0.05] sm:p-8">
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/75">
+                        This week
+                      </p>
+                      <h3 className="mt-2 text-xl font-bold text-hero-heading">You saved</h3>
+                    </div>
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <TrendingDown size={18} />
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex items-baseline gap-1">
+                    <span className="text-5xl font-bold leading-none tracking-tight text-hero-heading sm:text-6xl">
+                      ${savings}
+                    </span>
+                    <span className="text-2xl font-bold text-hero-heading/60">.00</span>
+                  </div>
+
+                  <p className="mt-3 text-sm text-hero-sub">
+                    Calculated from your meal plan vs. eating out average.
                   </p>
                 </div>
-              )}
-            </div>
+              </div>
+            </FadeIn>
+
+            {/* Coming up next */}
+            <FadeIn delay={0.4}>
+              <motion.div
+                whileHover={reduceMotion ? undefined : { y: -3 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                onClick={handlePotential}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handlePotential();
+                }}
+                className="warm-pane cursor-pointer rounded-[2rem] p-6 shadow-lg shadow-primary/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:p-8"
+              >
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary/75">
+                        Coming up
+                      </p>
+                      <h3 className="mt-2 text-xl font-bold text-hero-heading">Next meals</h3>
+                    </div>
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
+                      <ChefHat size={18} />
+                    </div>
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {mealPreview.slice(0, 2).map((meal, index) => (
+                      <div
+                        key={meal.id ?? index}
+                        className="flex items-start gap-4 rounded-2xl border border-border/40 bg-white/55 p-3 transition-colors duration-200 ease-out hover:bg-white"
+                      >
+                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-secondary">
+                          <img
+                            src={meal.thumbnail || MEAL_FALLBACK}
+                            alt={meal.name}
+                            loading="lazy"
+                            onError={handleImgFallback(MEAL_FALLBACK)}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0 pt-0.5">
+                          <p className="truncate text-base font-semibold text-hero-heading">
+                            {meal.name}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                              {meal.calories} cal
+                            </span>
+                            <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-hero-sub">
+                              {meal.category}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {mealPreview.length > 2 && (
+                    <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
+                      <p className="text-sm text-hero-sub">
+                        +{mealPreview.length - 2} more meal
+                        {mealPreview.length - 2 !== 1 ? 's' : ''}
+                      </p>
+                      <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
+                        Browse all
+                        <ArrowRight size={14} />
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </FadeIn>
           </div>
         </div>
       </main>
+    </div>
+  );
+}
 
-      {/* Google Fonts */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Crimson+Text:wght@400;600;700&display=swap"
-        rel="stylesheet"
-      />
+/**
+ * Small stat tile used inside the Calorie balance card.
+ * Tones map to the Landing palette:
+ *   - primary: sage (eaten)
+ *   - accent: warm cream (target)
+ *   - ink: hero-heading (remaining)
+ */
+function StatTile({ icon, value, label, tone = 'primary' }) {
+  const toneClasses = {
+    primary: 'bg-primary/10 text-primary',
+    accent: 'bg-accent text-accent-foreground',
+    ink: 'bg-hero-heading/10 text-hero-heading',
+  };
+  return (
+    <div className="text-center">
+      <div
+        className={`mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14 ${toneClasses[tone]}`}
+      >
+        {icon}
+      </div>
+      <p className="text-xl font-bold tracking-tight text-hero-heading sm:text-2xl">{value}</p>
+      <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-hero-sub sm:text-xs">
+        {label}
+      </p>
     </div>
   );
 }
