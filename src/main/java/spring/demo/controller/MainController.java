@@ -203,21 +203,42 @@ public class MainController {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Load all data
-        List<Recipe> selectedMeals = mealPlanService.selectMeals(userDetails, recipieList);
-        List<Recipe> randomMeals = mealPlanService.random();
+        // Guard: user must have preferences set before we can build a dashboard.
+        if (user.getPreferences() == null || user.getPreferences().getCalories() == 0) {
+            log.warn("User {} has no preferences — returning 202 so frontend can prompt onboarding", user.getId());
+            return ResponseEntity.status(202).build();
+        }
+
+        // Load all data — failures in individual sections should never 500 the whole load.
+        List<Recipe> selectedMeals;
+        try {
+            selectedMeals = mealPlanService.selectMeals(userDetails, recipieList);
+        } catch (Exception e) {
+            log.error("selectMeals failed for user {}", user.getId(), e);
+            selectedMeals = new ArrayList<>();
+        }
+
+        List<Recipe> randomMeals;
+        try {
+            randomMeals = mealPlanService.random();
+        } catch (Exception e) {
+            log.error("random() failed", e);
+            randomMeals = new ArrayList<>();
+        }
+
+        // Grocery list can be empty for first-time users or if the price API was unavailable.
         List<Ingredient> groceryList = groceryList(userDetails);
 
-        Integer budget = (int) user.getPreferences().getBudget();
-
-        // Calculate calorie stats (merged from getCalorieStats endpoint)
+        int budget = (int) Math.max(user.getPreferences().getBudget(), 0);
         int targetCalories = user.getPreferences().getCalories();
         Integer eatenToday = recipeRepository.getTodayEatenCalories(user.getId());
         if (eatenToday == null) eatenToday = 0;
 
         int remaining = Math.max(targetCalories - eatenToday, 0);
 
-        if (selectedMeals.isEmpty() || randomMeals.isEmpty() || groceryList.isEmpty() || budget == 0) {
+        // Only hard-fail when there are genuinely no planned meals to show.
+        if (selectedMeals.isEmpty()) {
+            log.warn("No planned meals found for user {} — returning 500", user.getId());
             return ResponseEntity.status(500).build();
         }
 

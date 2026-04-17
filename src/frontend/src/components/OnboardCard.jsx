@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VITE_API_URL } from '../config/env';
 
-const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
+const OnboardingCard = ({ setShowOnboarding, setShowLoading, onOnboardingStart }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,9 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
   const handleBack = () => setStep((prev) => Math.max(prev - 1, 0));
 
   const handleSubmit = async () => {
+    // Hide the onboarding form and immediately show the loading screen.
     setShowOnboarding(false);
+    if (onOnboardingStart) onOnboardingStart(); // marks loading as "onboarding" variant
     setShowLoading(true);
 
     // Sliders return string values from e.target.value — coerce to numbers so
@@ -51,24 +53,21 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
         body: JSON.stringify(payload)
       });
 
-      localStorage.setItem('pref', JSON.stringify(formData));
-      localStorage.removeItem('onboarding');
-
       if (res.ok) {
-        const data = await res.json();
-        console.table(data);
-
-        setTimeout(() => {
-          setShowLoading(false);
-        }, 5500);
+        // Only clear the onboarding flag AFTER a confirmed successful response so
+        // that a page-refresh during processing still shows the onboarding form.
+        localStorage.setItem('pref', JSON.stringify(formData));
+        localStorage.removeItem('onboarding');
+        // Dismiss the loading screen — Dashboard's useEffect will call loadDashboardData().
+        setShowLoading(false);
       } else {
         setShowLoading(false);
-        alert('Failed to submit onboarding data');
+        alert('Failed to submit onboarding data. Please try again.');
       }
     } catch (err) {
       console.error(err);
       setShowLoading(false);
-      alert('Error submitting onboarding data');
+      alert('Network error during onboarding. Please try again.');
     }
   };
 

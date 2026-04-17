@@ -13,9 +13,12 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
+  AlertCircle,
   CalendarDays,
   ChefHat,
   Flame,
+  Loader2,
+  RefreshCw,
   Target,
   Timer,
   ShoppingCart,
@@ -71,6 +74,7 @@ export default function Dashboard() {
   const [mealPreview, setMealPreview] = useState([]);
   const [grocery, setGrocery] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOnboardingLoad, setIsOnboardingLoad] = useState(false);
   const [usedCache, setUsedCache] = useState(false);
   const [groceryPreview, setGroceryPreview] = useState([]);
   const [isGroceryLoading, setIsGroceryLoading] = useState(true);
@@ -84,6 +88,8 @@ export default function Dashboard() {
   const [shouldNavigate, setShouldNavigate] = useState(false);
   const [budget, setBudget] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [loadError, setLoadError] = useState(null); // 'preparing' | 'error' | null
+  const [retryCount, setRetryCount] = useState(0);
 
   const handleLogout = () => {
     clearAuth();
@@ -221,8 +227,9 @@ export default function Dashboard() {
     setIsGroceryLoading(false);
   };
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = async (attempt = 0) => {
     setIsLoading(true);
+    setLoadError(null);
 
     const cached = getCache();
     if (cached && !cached.isExpired) {
@@ -240,17 +247,24 @@ export default function Dashboard() {
         },
       });
 
+      // 202 = user exists but has no preferences yet (needs onboarding)
+      if (response.status === 202) {
+        setLoadError('preparing');
+        setIsLoading(false);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const newData = await response.json();
+      setLoadError(null);
 
       if (cached && !cached.isExpired) {
-        const oldMealIds = cached.data.selectedMeals.map((m) => m.id).sort();
-        const newMealIds = newData.selectedMeals.map((m) => m.id).sort();
+        const oldMealIds = (cached.data.selectedMeals || []).map((m) => m.id).sort();
+        const newMealIds = (newData.selectedMeals || []).map((m) => m.id).sort();
         const hasDifference = JSON.stringify(oldMealIds) !== JSON.stringify(newMealIds);
-
         if (hasDifference) {
           setShowNewMealPlan(true);
           updateDashboardState(newData);
@@ -264,15 +278,28 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       clearCache();
-      setMeals([]);
-      setMealPreview([]);
-      setProgress(0);
-      setGrocery([]);
-      setGroceryPreview([]);
-    } finally {
-      if (!usedCache) {
-        setTimeout(() => setIsLoading(false), 600);
+
+      // Auto-retry up to 3 times with exponential back-off (3s, 6s, 12s).
+      // Render's free tier can take 30-60s to cold-start — don't give up immediately.
+      if (attempt < 3) {
+        const delay = 3000 * Math.pow(2, attempt);
+        setLoadError('retrying');
+        setRetryCount(attempt + 1);
+        setTimeout(() => loadDashboardData(attempt + 1), delay);
+        return;
       }
+
+      // Only blank the screen if we have NO cached data to fall back on.
+      setLoadError('error');
+      if (!cached) {
+        setMeals([]);
+        setMealPreview([]);
+        setProgress(0);
+        setGrocery([]);
+        setGroceryPreview([]);
+      }
+    } finally {
+      setTimeout(() => setIsLoading(false), 600);
     }
   };
 
@@ -290,7 +317,7 @@ export default function Dashboard() {
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <AmbientBackdrop position="fixed" variant="default" />
 
-      {isLoading && <LoadingScreen />}
+      {isLoading && <LoadingScreen isOnboarding={isOnboardingLoad} />}
       <Nav
         isNavVisible={isNavVisible}
         setIsNavVisible={setIsNavVisible}
@@ -311,7 +338,14 @@ export default function Dashboard() {
           <NewMealPlanShowcase meals={meals} onClose={() => setShowNewMealPlan(false)} />
         )}
         {showOnboarding && (
-          <OnboardingCard setShowOnboarding={setShowOnboarding} setShowLoading={setIsLoading} />
+          <OnboardingCard
+            setShowOnboarding={setShowOnboarding}
+            setShowLoading={(val) => {
+              setIsLoading(val);
+              if (!val) setIsOnboardingLoad(false);
+            }}
+            onOnboardingStart={() => setIsOnboardingLoad(true)}
+          />
         )}
         {showSettings && (
           <Settings setShowSettings={setShowSettings} setShowPreferences={setShowPreferences} />
@@ -341,6 +375,67 @@ export default function Dashboard() {
             </p>
           </FadeIn>
         </div>
+
+        {/* ── STATUS BANNERS ───────────────────────────────────── */}
+        {loadError === 'retrying' && (
+          <FadeIn>
+            <div className="mx-auto mb-8 max-w-[1600px]">
+              <div className="warm-pane flex items-center gap-4 rounded-2xl px-5 py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" strokeWidth={2} />
+                <div>
+                  <p className="font-playfair text-base text-hero-heading">
+                    Still setting up your plan…
+                  </p>
+                  <p className="font-crimson text-sm text-hero-sub">
+                    The server is warming up. Retrying automatically (attempt {retryCount}/3).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+        {loadError === 'preparing' && (
+          <FadeIn>
+            <div className="mx-auto mb-8 max-w-[1600px]">
+              <div className="warm-pane flex items-center gap-4 rounded-2xl px-5 py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" strokeWidth={2} />
+                <div>
+                  <p className="font-playfair text-base text-hero-heading">Preparing your first plan…</p>
+                  <p className="font-crimson text-sm text-hero-sub">
+                    Complete onboarding to generate your meals and grocery list.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+        {loadError === 'error' && meals.length === 0 && (
+          <FadeIn>
+            <div className="mx-auto mb-8 max-w-[1600px]">
+              <div className="warm-pane flex items-center justify-between gap-4 rounded-2xl px-5 py-4">
+                <div className="flex items-center gap-4">
+                  <AlertCircle className="h-5 w-5 flex-shrink-0 text-hero-sub" strokeWidth={2} />
+                  <div>
+                    <p className="font-playfair text-base text-hero-heading">Couldn't reach the server</p>
+                    <p className="font-crimson text-sm text-hero-sub">
+                      Your data is safe — we just can't load it right now.
+                    </p>
+                  </div>
+                </div>
+                <motion.button
+                  type="button"
+                  onClick={() => loadDashboardData(0)}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2 font-crimson text-sm font-semibold text-primary-foreground shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                  Retry
+                </motion.button>
+              </div>
+            </div>
+          </FadeIn>
+        )}
 
         {/* ── BENTO GRID ───────────────────────────────────────── */}
         <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">

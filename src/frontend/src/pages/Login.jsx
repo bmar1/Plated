@@ -40,7 +40,6 @@ export default function AuthForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'signup';
-    console.log('API URL:', VITE_API_URL);
     const res = await fetch(`${VITE_API_URL}/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
