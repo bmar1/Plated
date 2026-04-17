@@ -11,6 +11,7 @@ import Nav from '../components/Navbar';
 import '../styles/allMeals.css';
 import Settings from '../components/Settings';
 import SettingsOnboard from '../components/SettingsOnboard';
+import { VITE_API_URL } from '../config/env';
 
 export default function AllMeals() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function AllMeals() {
 
   const loadMeals = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/meals`, {
+      const response = await fetch(`${VITE_API_URL}/meals`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

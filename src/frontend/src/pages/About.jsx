@@ -11,6 +11,11 @@ import {
   Receipt,
 } from 'lucide-react';
 import MarketingNavBar from '../components/MarketingNavBar';
+import { VITE_API_URL } from '../config/env';
+
+if (import.meta.env.DEV && !VITE_API_URL) {
+  console.warn('VITE_API_URL is not set; check frontend/.env');
+}
 
 const NAV_LINKS = [
   { label: 'Origin', id: 'origin' },

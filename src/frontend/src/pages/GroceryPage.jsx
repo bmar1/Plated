@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingScreen from './LoadingScreen';
+import { VITE_API_URL } from '../config/env';
 
 const GroceryListPage = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const GroceryListPage = () => {
   const loadGrocery = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/meals/groceryList`, {
+      const response = await fetch(`${VITE_API_URL}/meals/groceryList`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

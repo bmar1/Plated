@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Eye, EyeOff, Salad, CalendarDays, Wallet, ShoppingCart } from 'lucide-react';
+import { VITE_API_URL } from '../config/env';
 
 function FadeIn({ children, delay = 0, className = '' }) {
   const reduceMotion = useReducedMotion();
@@ -39,8 +40,8 @@ export default function AuthForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'signup';
-    console.log('API URL:', process.env.REACT_APP_API_URL);
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/${endpoint}`, {
+    console.log('API URL:', VITE_API_URL);
+    const res = await fetch(`${VITE_API_URL}/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })

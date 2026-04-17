@@ -8,6 +8,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { VITE_API_URL } from '../config/env';
 
 export default function Settings({ setShowSettings, setShowPreferences }) {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function Settings({ setShowSettings, setShowPreferences }) {
   // On success, it clears localStorage and redirects to the login page.
   const handleDeleteAccount = async () => {
     try {
-      const response = await fetch('process.env.API_URL/auth/delete', {
+      const response = await fetch(`${VITE_API_URL}/auth/delete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ export default function Settings({ setShowSettings, setShowPreferences }) {
 
   const handleNewMealPlan = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}\onboarding`, {
+      const res = await fetch(`${VITE_API_URL}/onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

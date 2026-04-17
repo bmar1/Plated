@@ -9,6 +9,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { VITE_API_URL } from '../config/env';
 
 const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const OnboardingCard = ({ setShowOnboarding, setShowLoading }) => {
     setShowLoading(true);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/onboarding`, {
+      const res = await fetch(`${VITE_API_URL}/onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

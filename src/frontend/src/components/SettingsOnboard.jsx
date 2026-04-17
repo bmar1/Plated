@@ -8,6 +8,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { VITE_API_URL } from '../config/env';
 
 const SettingsOnboard = ({ setShowPreferences }) => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const SettingsOnboard = ({ setShowPreferences }) => {
     setShowPreferences(false);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/user/preferences`, {
+      const res = await fetch(`${VITE_API_URL}/user/preferences`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

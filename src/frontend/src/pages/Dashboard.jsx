@@ -17,6 +17,7 @@ import SettingsOnboard from '../components/SettingsOnboard';
 import Nav from '../components/Navbar';
 import NewMealPlanShowcase from '../components/NewMealShowcase';
 import LoadingScreen from './LoadingScreen';
+import { VITE_API_URL } from '../config/env';
 
 // --- Caching Configuration ---
 const ENABLE_CACHE = true;
@@ -218,7 +219,7 @@ export default function Dashboard() {
     }
     try {
       console.log('Fetching from API in the background...');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/load`, {
+      const response = await fetch(`${VITE_API_URL}/load`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

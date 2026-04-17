@@ -8,6 +8,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
+import { VITE_API_URL } from '../config/env';
 
 const RecipePage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const RecipePage = () => {
     try {
       const token = localStorage.getItem('token');
 
-      const url = `${process.env.REACT_APP_API_URL}/meals/updateMeal?name=${encodeURIComponent(name)}`;
+      const url = `${VITE_API_URL}/meals/updateMeal?name=${encodeURIComponent(name)}`;
 
       const response = await fetch(url, {
         method: 'PUT',
@@ -54,7 +55,7 @@ const RecipePage = () => {
       try {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/meal?name=${encodedName}`, {
+        const response = await fetch(`${VITE_API_URL}/meal?name=${encodedName}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

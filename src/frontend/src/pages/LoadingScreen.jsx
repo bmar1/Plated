@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { VITE_API_URL } from '../config/env';
+
+if (import.meta.env.DEV && !VITE_API_URL) {
+  console.warn('VITE_API_URL is not set; check frontend/.env');
+}
 
 export default function LoadingScreen() {
   const navigate = useNavigate();
