@@ -1,0 +1,36 @@
+# ── application.properties.example ────────────────────────────────────────────
+# Copy this file to application.properties for local development and fill in
+# your values. application.properties is NOT gitignored — it only contains
+# ${VAR_NAME} placeholders so the real secrets never touch the repo.
+#
+# ON RENDER:  set these as Environment Variables in the backend service.
+# LOCALLY:    set them in your IDE run-config, a .env file loaded by your shell,
+#             or export them before running `mvn spring-boot:run`.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Render injects PORT automatically — no action needed.
+# PORT=8080
+
+# ── Neon PostgreSQL ────────────────────────────────────────────────────────────
+# Full JDBC URL — copy from the Neon console "Connection string" tab and
+# change the scheme from postgresql:// to jdbc:postgresql://
+SPRING_DATASOURCE_URL=jdbc:postgresql://<host>/<dbname>?sslmode=require
+SPRING_DATASOURCE_USERNAME=neondb_owner
+SPRING_DATASOURCE_PASSWORD=<your-neon-password>
+
+# ── JWT ────────────────────────────────────────────────────────────────────────
+# Generate with: openssl rand -hex 32
+JWT_KEY=<64-char-hex-secret>
+
+# ── Third-party APIs ──────────────────────────────────────────────────────────
+WALMART_ID=<your-walmart-affiliate-id>
+NUTRITIONIX_APP_ID=<your-nutritionix-app-id>
+NUTRITIONIX_APP_KEY=<your-nutritionix-app-key>
+
+# ── CORS ──────────────────────────────────────────────────────────────────────
+# Set to the URL of the deployed frontend once it is live on Render.
+# Example: https://plated-frontend.onrender.com
+FRONTEND_URL=http://localhost:3000
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+PROD=true

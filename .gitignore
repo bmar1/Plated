@@ -28,9 +28,10 @@ bin/
 .DS_Store
 Thumbs.db
 
-# Spring Boot configuration
-application.properties
-application.yml
+# Spring Boot configuration — application.properties is SAFE to commit because
+# all secrets are now read from environment variables (${VAR_NAME} placeholders).
+# Only ignore override / profile-specific files that may hold local secrets.
+application-local.properties
 application-dev.properties
 application-prod.properties
 

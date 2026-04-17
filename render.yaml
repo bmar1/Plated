@@ -1,0 +1,83 @@
+# render.yaml — Render Blueprint
+# Defines both services so you can deploy the full stack from the Render dashboard
+# with "New > Blueprint" pointing at this repo.
+#
+# HOW TO USE
+# ──────────────────────────────────────────────────────────────────────────────
+# 1.  Push this file to your main branch.
+# 2.  In Render → New → Blueprint → connect this repo.
+# 3.  Render will create the two services below. For every variable marked
+#     `sync: false` you will be prompted to enter the real value in the
+#     Render dashboard (they are never stored in this file).
+# 4.  After both services are created, copy the frontend service's URL
+#     (e.g. https://plated-frontend.onrender.com) and paste it as the
+#     FRONTEND_URL env var on the backend service. Then redeploy the backend.
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Backend: Spring Boot (Docker) ──────────────────────────────────────────
+  - type: web
+    name: plated-backend
+    runtime: docker
+    # Render builds the image from the repo-root Dockerfile.
+    dockerfilePath: ./Dockerfile
+    # Render automatically injects PORT; Spring Boot reads it via server.port=${PORT:8080}
+    healthCheckPath: /api/auth/health
+    envVars:
+
+      # ── Neon PostgreSQL ────────────────────────────────────────────────────
+      # Full JDBC URL including host, db name, and ?sslmode=require.
+      # Example: jdbc:postgresql://neondb_owner:<pass>@<host>/neondb?sslmode=require
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+      # ── JWT ───────────────────────────────────────────────────────────────
+      - key: JWT_KEY
+        sync: false
+
+      # ── Third-party APIs ──────────────────────────────────────────────────
+      - key: WALMART_ID
+        sync: false
+
+      - key: NUTRITIONIX_APP_ID
+        sync: false
+
+      - key: NUTRITIONIX_APP_KEY
+        sync: false
+
+      # ── CORS ──────────────────────────────────────────────────────────────
+      # Set to the URL of the plated-frontend service once it is created.
+      # Example: https://plated-frontend.onrender.com
+      - key: FRONTEND_URL
+        sync: false
+
+      # ── Misc ──────────────────────────────────────────────────────────────
+      - key: PROD
+        value: "true"
+
+  # ── Frontend: Vite / React (Static Site) ───────────────────────────────────
+  - type: web
+    name: plated-frontend
+    runtime: static
+    # Build runs inside src/frontend where package.json lives.
+    rootDir: src/frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    # SPA rewrite: all paths → index.html so React Router handles routing.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Backend API base URL — set to the plated-backend service URL on Render.
+      # Example: https://plated-backend-xxxx.onrender.com/api
+      # VITE_ prefix required so Vite bakes the value into the JS bundle at build time.
+      - key: VITE_API_URL
+        sync: false
