@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Eye, EyeOff, Salad, CalendarDays, Wallet, ShoppingCart } from 'lucide-react';
 import { VITE_API_URL } from '../config/env';
+import AuthLoadingOverlay from '../components/AuthLoadingOverlay';
 
 function FadeIn({ children, delay = 0, className = '' }) {
   const reduceMotion = useReducedMotion();
@@ -34,37 +35,49 @@ export default function AuthForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [accountError, setAccountError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const message = location.state?.message;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     const endpoint = isLogin ? 'login' : 'signup';
-    const res = await fetch(`${VITE_API_URL}/auth/${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const res = await fetch(`${VITE_API_URL}/auth/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('email', email);
-      if (isLogin) localStorage.removeItem('onboarding');
-      else localStorage.setItem('onboarding', true);
-      navigate('/dashboard');
-      setPasswordError(false);
-    } else if (isLogin && res.status === 403) {
-      setPasswordError(true);
-      setTimeout(() => setPasswordError(false), 3000);
-    } else if (!isLogin && res.status === 400) {
-      setAccountError(true);
-      setTimeout(() => setAccountError(false), 3000);
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('email', email);
+        if (isLogin) localStorage.removeItem('onboarding');
+        else localStorage.setItem('onboarding', true);
+        setPasswordError(false);
+        navigate('/dashboard');
+        // Leave submitting=true so the overlay stays up until the route unmounts.
+      } else if (isLogin && res.status === 403) {
+        setSubmitting(false);
+        setPasswordError(true);
+        setTimeout(() => setPasswordError(false), 3000);
+      } else if (!isLogin && res.status === 400) {
+        setSubmitting(false);
+        setAccountError(true);
+        setTimeout(() => setAccountError(false), 3000);
+      } else {
+        setSubmitting(false);
+      }
+    } catch {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex bg-background text-foreground overflow-hidden">
+    <div className="relative min-h-screen flex bg-background text-foreground overflow-hidden">
       {/* ── LEFT PANEL — brand + visual ──────────────────────── */}
       <div className="hidden lg:flex lg:w-[46%] xl:w-[42%] relative flex-col justify-between overflow-hidden bg-gradient-to-b from-[#F2EDE0] via-[#EDE5D0] to-[#E5DAC5] p-10 xl:p-14">
         {/* Organic blobs */}
@@ -272,9 +285,17 @@ export default function AuthForm() {
                 {/* Submit */}
                 <button
                   type="submit"
-                  className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  disabled={submitting}
+                  aria-busy={submitting}
+                  className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {isLogin ? 'Log in' : 'Create my account'}
+                  {submitting
+                    ? isLogin
+                      ? 'Logging in…'
+                      : 'Creating account…'
+                    : isLogin
+                      ? 'Log in'
+                      : 'Create my account'}
                   <ArrowRight
                     size={18}
                     className="transition-transform duration-200 group-hover:translate-x-0.5"
@@ -313,6 +334,9 @@ export default function AuthForm() {
           </FadeIn>
         </div>
       </div>
+
+      {/* Loading overlay shown while the auth fetch is in flight */}
+      <AuthLoadingOverlay open={submitting} mode={isLogin ? 'login' : 'signup'} />
     </div>
   );
 }
