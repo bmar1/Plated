@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Eye, EyeOff, Salad, CalendarDays, Wallet, ShoppingCart } from 'lucide-react';
@@ -26,6 +26,9 @@ const PERKS = [
   { icon: ShoppingCart, label: 'One-click grocery list' }
 ];
 
+/** After this many ms still waiting on the server, show the loading modal (cold start). Faster responses skip it. */
+const PENDING_OVERLAY_DELAY_MS = 400;
+
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const location = useLocation();
@@ -33,16 +36,52 @@ export default function AuthForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [accountError, setAccountError] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  /** Login failure message (wrong credentials, disabled account, etc.) */
+  const [passwordError, setPasswordError] = useState(null);
+  /** Signup failure (email taken, etc.) */
+  const [accountError, setAccountError] = useState(null);
+  /** True while the auth request is in flight (disables the submit button). */
+  const [authPending, setAuthPending] = useState(false);
+  /** Loading modal: after PENDING_OVERLAY_DELAY_MS while still waiting, or immediately on success before navigate. */
+  const [showAuthOverlay, setShowAuthOverlay] = useState(false);
+
+  const pendingOverlayTimerRef = useRef(null);
+  const requestInFlightRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (pendingOverlayTimerRef.current != null) {
+        window.clearTimeout(pendingOverlayTimerRef.current);
+      }
+    };
+  }, []);
 
   const message = location.state?.message;
 
+  const clearPendingOverlayTimer = () => {
+    if (pendingOverlayTimerRef.current != null) {
+      window.clearTimeout(pendingOverlayTimerRef.current);
+      pendingOverlayTimerRef.current = null;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
-    setSubmitting(true);
+    if (authPending) return;
+    setPasswordError(null);
+    setAccountError(null);
+    clearPendingOverlayTimer();
+    setShowAuthOverlay(false);
+    setAuthPending(true);
+    requestInFlightRef.current = true;
+
+    pendingOverlayTimerRef.current = window.setTimeout(() => {
+      pendingOverlayTimerRef.current = null;
+      if (requestInFlightRef.current) {
+        setShowAuthOverlay(true);
+      }
+    }, PENDING_OVERLAY_DELAY_MS);
+
     const endpoint = isLogin ? 'login' : 'signup';
     try {
       const res = await fetch(`${VITE_API_URL}/auth/${endpoint}`, {
@@ -51,28 +90,64 @@ export default function AuthForm() {
         body: JSON.stringify({ email, password })
       });
 
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+
+      clearPendingOverlayTimer();
+      requestInFlightRef.current = false;
+
       if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('email', email);
-        if (isLogin) localStorage.removeItem('onboarding');
-        else localStorage.setItem('onboarding', true);
-        setPasswordError(false);
-        navigate('/dashboard');
-        // Leave submitting=true so the overlay stays up until the route unmounts.
-      } else if (isLogin && res.status === 403) {
-        setSubmitting(false);
-        setPasswordError(true);
-        setTimeout(() => setPasswordError(false), 3000);
-      } else if (!isLogin && res.status === 400) {
-        setSubmitting(false);
-        setAccountError(true);
-        setTimeout(() => setAccountError(false), 3000);
+        if (data?.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('email', email);
+          if (isLogin) localStorage.removeItem('onboarding');
+          else localStorage.setItem('onboarding', true);
+          setAuthPending(false);
+          setShowAuthOverlay(true);
+          requestAnimationFrame(() => {
+            navigate('/dashboard');
+          });
+          return;
+        }
+        setAuthPending(false);
+        setShowAuthOverlay(false);
+        if (isLogin) {
+          setPasswordError('Something went wrong—no session token. Please try again.');
+        } else {
+          setAccountError('Something went wrong—no session token. Please try again.');
+        }
+        return;
+      }
+
+      setAuthPending(false);
+      setShowAuthOverlay(false);
+
+      if (isLogin) {
+        if (res.status === 401 || res.status === 403) {
+          setPasswordError(data?.message || 'Wrong email or password. Try again.');
+        } else {
+          setPasswordError(data?.message || 'Could not sign you in. Please try again.');
+        }
       } else {
-        setSubmitting(false);
+        if (res.status === 409 || res.status === 400) {
+          setAccountError(data?.message || "That email's already taken. Try logging in instead.");
+        } else {
+          setAccountError(data?.message || 'Could not create your account. Please try again.');
+        }
       }
     } catch {
-      setSubmitting(false);
+      clearPendingOverlayTimer();
+      requestInFlightRef.current = false;
+      setAuthPending(false);
+      setShowAuthOverlay(false);
+      setPasswordError(isLogin ? 'Network error. Check your connection and try again.' : null);
+      setAccountError(
+        isLogin ? null : 'Network error. Check your connection and try again.'
+      );
     }
   };
 
@@ -246,7 +321,7 @@ export default function AuthForm() {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
                       className={`w-full rounded-2xl border-2 bg-white/70 px-5 py-3.5 pr-14 text-base text-foreground placeholder-muted-foreground outline-none backdrop-blur-sm transition-all duration-200 focus:shadow-[0_0_0_4px_rgba(97,140,69,0.08)] ${
-                        passwordError
+                        passwordError != null
                           ? 'border-red-400 focus:border-red-400'
                           : 'border-border/60 focus:border-primary'
                       }`}
@@ -261,23 +336,27 @@ export default function AuthForm() {
                     </button>
                   </div>
 
-                  {/* Error states */}
-                  {passwordError && (
+                  {/* Error states — server message when available */}
+                  {passwordError != null && (
                     <motion.div
-                      initial={{ opacity: 0, y: -8 }}
+                      initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
                       className="mt-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700"
+                      role="alert"
                     >
-                      Wrong email or password. Try again.
+                      {passwordError}
                     </motion.div>
                   )}
-                  {accountError && (
+                  {accountError != null && (
                     <motion.div
-                      initial={{ opacity: 0, y: -8 }}
+                      initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
                       className="mt-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700"
+                      role="alert"
                     >
-                      That email's already taken. Try logging in instead.
+                      {accountError}
                     </motion.div>
                   )}
                 </div>
@@ -285,11 +364,11 @@ export default function AuthForm() {
                 {/* Submit */}
                 <button
                   type="submit"
-                  disabled={submitting}
-                  aria-busy={submitting}
+                  disabled={authPending}
+                  aria-busy={authPending}
                   className="group mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {submitting
+                  {authPending
                     ? isLogin
                       ? 'Logging in…'
                       : 'Creating account…'
@@ -310,8 +389,8 @@ export default function AuthForm() {
                   type="button"
                   onClick={() => {
                     setIsLogin(!isLogin);
-                    setPasswordError(false);
-                    setAccountError(false);
+                    setPasswordError(null);
+                    setAccountError(null);
                   }}
                   className="font-semibold text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline"
                 >
@@ -335,8 +414,8 @@ export default function AuthForm() {
         </div>
       </div>
 
-      {/* Loading overlay shown while the auth fetch is in flight */}
-      <AuthLoadingOverlay open={submitting} mode={isLogin ? 'login' : 'signup'} />
+      {/* Delayed while waiting on slow server (cold start); hidden on fast errors e.g. 401; stays on success */}
+      <AuthLoadingOverlay open={showAuthOverlay} mode={isLogin ? 'login' : 'signup'} />
     </div>
   );
 }

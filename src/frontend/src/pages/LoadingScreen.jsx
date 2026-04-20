@@ -13,8 +13,8 @@ import { ChefHat } from 'lucide-react';
 
 const GENERIC_MESSAGES = [
   'Loading your dashboard…',
-  'Fetching todays meals…',
-  'Checking your progress…',
+  "Fetching today's meals…",
+  'Checking your progress…'
 ];
 
 const ONBOARDING_MESSAGES = [
@@ -23,7 +23,7 @@ const ONBOARDING_MESSAGES = [
   'Pricing your grocery list…',
   'Building your weekly meal plan…',
   'Finalising your shopping list…',
-  'Almost there — polishing your plan…',
+  'Almost there — polishing your plan…'
 ];
 
 export default function LoadingScreen({ isOnboarding = false }) {
@@ -36,7 +36,7 @@ export default function LoadingScreen({ isOnboarding = false }) {
   useEffect(() => {
     const interval = setInterval(
       () => setMsgIndex((i) => Math.min(i + 1, messages.length - 1)),
-      isOnboarding ? 5500 : 2000,
+      isOnboarding ? 5500 : 2000
     );
     return () => clearInterval(interval);
   }, [isOnboarding, messages.length]);
@@ -63,7 +63,7 @@ export default function LoadingScreen({ isOnboarding = false }) {
         style={{
           background:
             'radial-gradient(ellipse 120% 80% at 50% 60%, hsl(99 32% 42% / 0.12) 0%, transparent 70%), ' +
-            'linear-gradient(160deg, hsl(40 33% 92%) 0%, hsl(99 20% 90%) 50%, hsl(40 28% 88%) 100%)',
+            'linear-gradient(160deg, hsl(40 33% 92%) 0%, hsl(99 20% 90%) 50%, hsl(40 28% 88%) 100%)'
         }}
       />
 
@@ -77,7 +77,7 @@ export default function LoadingScreen({ isOnboarding = false }) {
           height: 420,
           borderRadius: '50%',
           background: 'radial-gradient(circle, hsl(99 32% 42% / 0.14) 0%, transparent 70%)',
-          filter: 'blur(60px)',
+          filter: 'blur(60px)'
         }}
       />
       {/* Soft orb 2 */}
@@ -90,7 +90,7 @@ export default function LoadingScreen({ isOnboarding = false }) {
           height: 320,
           borderRadius: '50%',
           background: 'radial-gradient(circle, hsl(40 33% 70% / 0.18) 0%, transparent 70%)',
-          filter: 'blur(50px)',
+          filter: 'blur(50px)'
         }}
       />
 
@@ -142,14 +142,10 @@ export default function LoadingScreen({ isOnboarding = false }) {
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: '100%' }}
-            transition={
-              reduceMotion
-                ? {}
-                : { repeat: Infinity, duration: 1.6, ease: 'easeInOut' }
-            }
+            transition={reduceMotion ? {} : { repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
             className="absolute inset-y-0 w-1/2 rounded-full bg-primary/60"
             style={{
-              boxShadow: '0 0 12px hsl(99 32% 42% / 0.5)',
+              boxShadow: '0 0 12px hsl(99 32% 42% / 0.5)'
             }}
           />
         </div>
@@ -163,10 +159,7 @@ export default function LoadingScreen({ isOnboarding = false }) {
                 className="h-1.5 rounded-full transition-all duration-500"
                 style={{
                   width: i <= msgIndex ? (i === msgIndex ? 20 : 6) : 6,
-                  background:
-                    i <= msgIndex
-                      ? 'hsl(99 32% 42%)'
-                      : 'hsl(99 32% 42% / 0.2)',
+                  background: i <= msgIndex ? 'hsl(99 32% 42%)' : 'hsl(99 32% 42% / 0.2)'
                 }}
               />
             ))}
