@@ -12,6 +12,7 @@ public class DashboardData {
     private int eaten; //total eaten
     private int target; //total cal
     private int remaining; //total meals remaining
+    private boolean poolRefreshed;
 
 
 
@@ -26,6 +27,13 @@ public class DashboardData {
         this.eaten = eaten;
         this.target = target;
         this.remaining = remaining;
+        this.poolRefreshed = false;
+    }
+
+    public DashboardData(List<Recipe> selectedMeals, List<Recipe> randomMeals, List<Ingredient>
+            groceryList, Integer progress, Integer budget, int eaten, int target, int remaining, boolean poolRefreshed) {
+        this(selectedMeals, randomMeals, groceryList, progress, budget, eaten, target, remaining);
+        this.poolRefreshed = poolRefreshed;
     }
 
     public List<Recipe> getSelectedMeals() { return selectedMeals; }
@@ -62,5 +70,12 @@ public class DashboardData {
         this.progress = progress;
     }
 
+    public boolean isPoolRefreshed() {
+        return poolRefreshed;
+    }
+
+    public void setPoolRefreshed(boolean poolRefreshed) {
+        this.poolRefreshed = poolRefreshed;
+    }
 
 }

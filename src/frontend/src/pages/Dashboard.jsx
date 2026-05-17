@@ -33,6 +33,7 @@ import Nav from '../components/Navbar';
 import NewMealPlanShowcase from '../components/NewMealShowcase';
 import LoadingScreen from './LoadingScreen';
 import AmbientBackdrop from '../components/AmbientBackdrop';
+import PoolRefreshedToast from '../components/PoolRefreshedToast';
 import { VITE_API_URL } from '../config/env';
 
 const ENABLE_CACHE = true;
@@ -71,6 +72,7 @@ export default function Dashboard() {
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [meals, setMeals] = useState([]);
   const [showNewMealPlan, setShowNewMealPlan] = useState(false);
+  const [showPoolRefreshedToast, setShowPoolRefreshedToast] = useState(false);
   const [mealPreview, setMealPreview] = useState([]);
   const [grocery, setGrocery] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -261,6 +263,11 @@ export default function Dashboard() {
       const newData = await response.json();
       setLoadError(null);
 
+      // If the server regenerated the pool, show the toast notification.
+      if (newData.poolRefreshed === true) {
+        setShowPoolRefreshedToast(true);
+      }
+
       if (cached && !cached.isExpired) {
         const oldMealIds = (cached.data.selectedMeals || []).map((m) => m.id).sort();
         const newMealIds = (newData.selectedMeals || []).map((m) => m.id).sort();
@@ -336,6 +343,9 @@ export default function Dashboard() {
       >
         {showNewMealPlan && (
           <NewMealPlanShowcase meals={meals} onClose={() => setShowNewMealPlan(false)} />
+        )}
+        {showPoolRefreshedToast && (
+          <PoolRefreshedToast onClose={() => setShowPoolRefreshedToast(false)} />
         )}
         {showOnboarding && (
           <OnboardingCard

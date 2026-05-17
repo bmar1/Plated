@@ -1,5 +1,6 @@
 package spring.demo.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +45,9 @@ public class User implements UserDetails {
             cascade = {CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     private List<UserIngredient> groceryList = new ArrayList<>();
+
+    @Column(name = "last_meal_plan_generated_at")
+    private LocalDate lastMealPlanGeneratedAt;
 
     public Long getId() {
         return id;
@@ -121,5 +125,13 @@ public class User implements UserDetails {
 
     public Role getRole() {
         return role;
+    }
+
+    public LocalDate getLastMealPlanGeneratedAt() {
+        return lastMealPlanGeneratedAt;
+    }
+
+    public void setLastMealPlanGeneratedAt(LocalDate lastMealPlanGeneratedAt) {
+        this.lastMealPlanGeneratedAt = lastMealPlanGeneratedAt;
     }
 }

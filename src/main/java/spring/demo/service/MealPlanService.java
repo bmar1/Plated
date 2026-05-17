@@ -805,4 +805,53 @@ public class MealPlanService {
 
         return Math.toIntExact(Math.round(((float) eatenCalories / calories) * 100));
     }
+
+    // Returns true when the entire weekly pool is consumed (every UserMealPlan row is eaten),
+    // OR 7+ days have passed since lastMealPlanGeneratedAt.
+    //
+    // "Today's planned meals all eaten" is NOT pool exhaustion — selectMeals already rotates
+    // the next batch from the existing pool. Only when every row in mealPlans is eaten do we
+    // need a full regeneration (plus the weekly time fallback).
+    //
+    // A null lastMealPlanGeneratedAt does NOT trigger the time condition until a generation stamps it.
+    public boolean isPoolExhausted(User user) {
+        List<UserMealPlan> plans = user.getMealPlans();
+        if (plans == null || plans.isEmpty()) return false;
+
+        boolean entirePoolEaten = plans.stream().allMatch(UserMealPlan::isEaten);
+
+        java.time.LocalDate lastGenerated = user.getLastMealPlanGeneratedAt();
+        boolean weekElapsed = lastGenerated != null &&
+                java.time.temporal.ChronoUnit.DAYS.between(lastGenerated, java.time.LocalDate.now()) >= 7;
+
+        if (entirePoolEaten) log.info("Pool exhaustion (entirePoolEaten) for user {}", user.getId());
+        if (weekElapsed) log.info("Pool exhaustion (7-day) for user {}", user.getId());
+
+        return entirePoolEaten || weekElapsed;
+    }
+
+    // Limits previously-seen recipes in a new pool to maxRepeats.
+    // Fresh recipes (not in seenIds) are always kept; the repeat set is shuffled before capping.
+    public ArrayList<Recipe> applyRepeatCap(ArrayList<Recipe> recipes, Set<Long> seenIds, int maxRepeats) {
+        if (seenIds == null || seenIds.isEmpty()) return recipes;
+
+        List<Recipe> fresh = recipes.stream()
+                .filter(r -> !seenIds.contains(r.getId()))
+                .collect(Collectors.toList());
+
+        List<Recipe> repeats = recipes.stream()
+                .filter(r -> seenIds.contains(r.getId()))
+                .collect(Collectors.toList());
+
+        Collections.shuffle(repeats);
+        List<Recipe> capped = repeats.subList(0, Math.min(maxRepeats, repeats.size()));
+
+        log.info("applyRepeatCap: {} fresh + {}/{} repeats (cap={})",
+                fresh.size(), capped.size(), repeats.size(), maxRepeats);
+
+        ArrayList<Recipe> result = new ArrayList<>(fresh);
+        result.addAll(capped);
+        Collections.shuffle(result);
+        return result;
+    }
 }

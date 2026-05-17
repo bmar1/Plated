@@ -21,7 +21,6 @@ import spring.demo.models.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -243,6 +242,86 @@ public class IntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));  // Check array is empty
+    }
+
+    // ── Pool refresh integration tests ────────────────────────────────────
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "test@example.com")
+    void loadDashboard_returnsPoolRefreshedTrue_whenEntirePoolEaten() throws Exception {
+        // Given – only rows left are all eaten (entire weekly pool consumed)
+        User user = userRepository.findByEmail("test@example.com").orElseThrow();
+        user.getMealPlans().clear();
+
+        Recipe recipe = recipeRepository.findByNameIgnoreCase("Asado").orElseThrow();
+        UserMealPlan mp = new UserMealPlan();
+        mp.setUser(user);
+        mp.setRecipe(recipe);
+        mp.setPlanned(true);
+        mp.setEaten(true);
+        user.getMealPlans().add(mp);
+        userRepository.saveAndFlush(user);
+
+        mockMvc.perform(get("/api/load"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.poolRefreshed").value(true));
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "test@example.com")
+    void loadDashboard_returnsPoolRefreshedFalse_whenPlannedEaten_butPoolRowsRemain() throws Exception {
+        // Given – today's planned meal is eaten, but another pool row is still uneaten
+        User user = userRepository.findByEmail("test@example.com").orElseThrow();
+        user.getMealPlans().clear();
+        user.setLastMealPlanGeneratedAt(java.time.LocalDate.now());
+
+        Recipe asado = recipeRepository.findByNameIgnoreCase("Asado").orElseThrow();
+        UserMealPlan eatenToday = new UserMealPlan();
+        eatenToday.setUser(user);
+        eatenToday.setRecipe(asado);
+        eatenToday.setPlanned(true);
+        eatenToday.setEaten(true);
+        user.getMealPlans().add(eatenToday);
+
+        Recipe butterChicken = recipeRepository.findByNameIgnoreCase("Butter Chicken").orElseThrow();
+        UserMealPlan poolRemainder = new UserMealPlan();
+        poolRemainder.setUser(user);
+        poolRemainder.setRecipe(butterChicken);
+        poolRemainder.setPlanned(false);
+        poolRemainder.setEaten(false);
+        user.getMealPlans().add(poolRemainder);
+
+        userRepository.saveAndFlush(user);
+
+        mockMvc.perform(get("/api/load"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.poolRefreshed").value(false));
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "test@example.com")
+    void loadDashboard_returnsPoolRefreshedFalse_whenMealsNotExhausted() throws Exception {
+        // Given – user has a planned meal that is NOT eaten
+        User user = userRepository.findByEmail("test@example.com").orElseThrow();
+        user.getMealPlans().clear();
+        user.setLastMealPlanGeneratedAt(java.time.LocalDate.now()); // fresh timestamp
+
+        Recipe recipe = recipeRepository.findByNameIgnoreCase("Asado").orElseThrow();
+        UserMealPlan mp = new UserMealPlan();
+        mp.setUser(user);
+        mp.setRecipe(recipe);
+        mp.setPlanned(true);
+        mp.setEaten(false); // not exhausted
+        user.getMealPlans().add(mp);
+        userRepository.saveAndFlush(user);
+
+        // When / Then – poolRefreshed must be false
+        mockMvc.perform(get("/api/load"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.poolRefreshed").value(false));
     }
 
 

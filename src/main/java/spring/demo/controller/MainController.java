@@ -132,6 +132,9 @@ public class MainController {
             return ResponseEntity.status(500).build();
         }
 
+        user.setLastMealPlanGeneratedAt(LocalDate.now());
+        userRepository.save(user);
+
         log.info("=== ONBOARDING SUCCESS: Returning {} recipes ===", recipieList.size());
         return ResponseEntity.ok(recipieList);
     }
@@ -193,11 +196,15 @@ public class MainController {
             return ResponseEntity.status(500).build();
         }
 
+        user.setLastMealPlanGeneratedAt(LocalDate.now());
+        userRepository.save(user);
+
         log.info("=== MEAL PLAN SUCCESS: Returning {} recipes ===", recipieList.size());
         return ResponseEntity.ok(recipieList);
     }
 
     @GetMapping("/load")
+    @Transactional
     public ResponseEntity<?> loadDashboard(@AuthenticationPrincipal UserDetails userDetails) throws JsonProcessingException {
         // Get user
         User user = userRepository.findByEmail(userDetails.getUsername())
@@ -207,6 +214,17 @@ public class MainController {
         if (user.getPreferences() == null || user.getPreferences().getCalories() == 0) {
             log.warn("User {} has no preferences — returning 202 so frontend can prompt onboarding", user.getId());
             return ResponseEntity.status(202).build();
+        }
+
+        // Full regen only when entire weekly pool is eaten OR 7 days since last generation.
+        // Today's planned meals all eaten is handled inside selectMeals (same pool).
+        boolean poolRefreshed = false;
+        if (mealPlanService.isPoolExhausted(user)) {
+            log.info("Weekly pool regen for user {} (entire pool eaten or 7-day rollover)", user.getId());
+            poolRefreshed = regenerateFullMealPlan(user);
+            // Re-fetch user so selectMeals sees the freshly saved plans
+            user = userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         }
 
         // Load all data — failures in individual sections should never 500 the whole load.
@@ -247,7 +265,7 @@ public class MainController {
                 : 0;
 
         DashboardData data = new DashboardData(selectedMeals, randomMeals, groceryList, progress,
-                budget, eatenToday, targetCalories, remaining
+                budget, eatenToday, targetCalories, remaining, poolRefreshed
         );
 
         return ResponseEntity.ok(data);
@@ -388,5 +406,48 @@ public class MainController {
         }
 
         return ingredients;
+    }
+
+    // Performs a full meal plan regeneration (same logic as POST /meal-plans) and stamps the timestamp.
+    // Returns true on success, false if generation failed (dashboard proceeds with stale data).
+    private boolean regenerateFullMealPlan(User user) {
+        // Capture previously-seen recipe IDs before clearing so we can cap repeats in the new pool.
+        final int MAX_REPEATS = 6;
+        Set<Long> previouslySeenIds = user.getMealPlans().stream()
+                .filter(mp -> mp.getRecipe() != null)
+                .map(mp -> mp.getRecipe().getId())
+                .collect(Collectors.toSet());
+
+        try {
+            recipieList = mealPlanService.loadandFilterRecipies(user, recipieList, priceList);
+        } catch (Exception e) {
+            log.error("regenerateFullMealPlan: loadandFilterRecipies failed for user {}", user.getId(), e);
+            return false;
+        }
+
+        if (!priceList.isEmpty()) {
+            for (Ingredient ingredient : priceList) {
+                ingredientRepository.save(ingredient);
+            }
+        }
+
+        user.getGroceryList().clear();
+        user.getMealPlans().clear();
+
+        int MAX_MEAL_PLAN_SIZE = (user.getPreferences().getMeals() * 7);
+        if (recipieList.size() > MAX_MEAL_PLAN_SIZE) {
+            recipieList = mealPlanService.filterRecipes(recipieList, MAX_MEAL_PLAN_SIZE,
+                    user.getPreferences().getCalories(), user.getPreferences().getMeals());
+        }
+
+        // Limit previously-eaten dishes to MAX_REPEATS to keep the new pool feeling fresh.
+        recipieList = mealPlanService.applyRepeatCap(recipieList, previouslySeenIds, MAX_REPEATS);
+
+        mealPlanService.findAndSaveMealPlan(user, recipieList, priceList);
+        user.setLastMealPlanGeneratedAt(LocalDate.now());
+        userRepository.save(user);
+
+        log.info("regenerateFullMealPlan: regenerated {} recipes for user {}", recipieList.size(), user.getId());
+        return !recipieList.isEmpty();
     }
 }
